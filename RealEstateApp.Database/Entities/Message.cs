@@ -8,4 +8,7 @@ public class Message
     public int ReceiverId { get; set; }
     public int PropertyId { get; set; }
     public string Chat { get; set; }
+    public User Sender { get; set; }
+    public User Receiver { get; set; }
+    public Property Property { get; set; }
 }
