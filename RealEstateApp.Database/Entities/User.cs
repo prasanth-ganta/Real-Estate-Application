@@ -1,17 +1,22 @@
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace RealEstateApp.Database.Entities;
 
 public class User
 {
+    //Primary Key
     public int ID { get; set; }
-    public string Name { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string FullName => $"{FirstName} {LastName}";  
 
     [EmailAddress]
     public string Email { get; set; }
 
     public string Password { get; set; }
+
+
+    //Namvigation Properties
     public ICollection<Role> Roles { get; set; }
     public ICollection<Property> Properties { get; set; }
     public ICollection<Message> ReceivedMessages { get; set; }
