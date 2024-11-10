@@ -9,4 +9,5 @@ public class Document
     [Url]
     public string Url {get;set;}
     public string Description {get;set;}
+    public Property Property { get; set; }
 }
