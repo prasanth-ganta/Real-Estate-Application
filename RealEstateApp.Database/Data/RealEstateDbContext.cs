@@ -27,7 +27,7 @@ public class RealEstateDbContext : DbContext
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {
             modelBuilder.Entity(entity.Name).Property<DateTime>("CreatedAt").HasDefaultValueSql("GETDATE()");
-            modelBuilder.Entity(entity.Name).Property<DateTime?>("ModifiedAt").HasDefaultValue();
+            modelBuilder.Entity(entity.Name).Property<DateTime?>("ModifiedAt").HasDefaultValueSql("GETDATE()");
             modelBuilder.Entity(entity.Name).Property<string>("CreatedBy");
             modelBuilder.Entity(entity.Name).Property<string>("ModifiedBy");
             modelBuilder.Entity(entity.Name).Property<bool>("IsActive").HasDefaultValue(true);

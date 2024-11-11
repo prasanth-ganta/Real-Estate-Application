@@ -38,6 +38,14 @@ public class PropertyConfig : IEntityTypeConfiguration<Property>
 
         builder.HasOne(p => p.PropertyStatus)
             .WithMany(ps => ps.Properties)
-            .HasForeignKey(p => p.PropertyStatusId);    
+            .HasForeignKey(p => p.PropertyStatusId);   
+        
+        builder.HasMany(p => p.FavouritedByUsers)
+            .WithMany(u => u.FavouriteProperties)
+            .UsingEntity
+            ("Favourites",
+                l => l.HasOne(typeof(User)).WithMany().OnDelete(DeleteBehavior.Restrict),
+                r => r.HasOne(typeof(Property)).WithMany().OnDelete(DeleteBehavior.Restrict)
+            );
     }
 }
