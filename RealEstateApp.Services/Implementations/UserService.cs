@@ -17,7 +17,7 @@ public class UserService : IUserService
     private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
     private readonly IConfiguration _configuration;
-    public UserService(IMapper mapper, IUserRepository userRepository, IConfigurationSection configuration)
+    public UserService(IMapper mapper, IUserRepository userRepository, IConfiguration configuration)
     {
         _mapper = mapper;
         _userRepository = userRepository;
