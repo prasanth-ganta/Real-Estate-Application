@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RealEstateApp.Database.Data;
 
@@ -11,9 +12,11 @@ using RealEstateApp.Database.Data;
 namespace RealEstateApp.Database.Migrations
 {
     [DbContext(typeof(RealEstateDbContext))]
-    partial class RealEstateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241111113645_Migration2")]
+    partial class Migration2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -559,8 +562,8 @@ namespace RealEstateApp.Database.Migrations
                             Email = "abdul@example.com",
                             FirstName = "Abdul",
                             LastName = "Shaik",
-                            Password = "$2a$11$hTU.ergWzllbpj69950Hsu/KgPWB4BFR4kkExPJknlfMqflaeJljO",
-                            UserName = "abdul"
+                            Password = "Abdul@123",
+                            UserName = "$2a$11$mev4uhc7JYVFPfTDj.SgGeBVVNGc1Xjn58QMnTbERugZ8nJgzcrzW"
                         },
                         new
                         {
@@ -568,7 +571,7 @@ namespace RealEstateApp.Database.Migrations
                             Email = "prashanth@example.com",
                             FirstName = "Prashanth",
                             LastName = "Ganta",
-                            Password = "$2a$11$KpkxCo9X.Y6bhaquKA4lQOT5zb0.N5.gbCHsmL4WRN3Hh4BRjwK92",
+                            Password = "$2a$11$02OtJ5.d8tmglZ2076gpUOYhTjImxBCTBNfqJFxv3YVkr5uXKvm7u",
                             UserName = "prashanth"
                         });
                 });
