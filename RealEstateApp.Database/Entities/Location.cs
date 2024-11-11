@@ -9,5 +9,6 @@ public class Location
     public string Country { get; set; }
     public string GeoLocation { get; set; }
 
+    //Navigation Property
     public Property Property { get; set; }
 }
