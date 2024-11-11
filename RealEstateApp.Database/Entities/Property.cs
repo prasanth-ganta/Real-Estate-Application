@@ -26,5 +26,6 @@ public class Property
     public ApprovalStatus ApprovalStatus { get; set; }
     public PropertyStatus PropertyStatus { get; set; } 
     public ICollection<Document> Documents { get; set; }
+    public ICollection<User> FavouritedByUsers { get; set; }
 
 }
