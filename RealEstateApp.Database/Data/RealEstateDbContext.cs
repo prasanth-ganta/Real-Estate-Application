@@ -6,7 +6,7 @@ namespace RealEstateApp.Database.Data;
 
 public class RealEstateDbContext : DbContext
 {
-    public RealEstateDbContext(DbContextOptions options) : base(options){}
+    public RealEstateDbContext(DbContextOptions<RealEstateDbContext> options) : base(options){}
 
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
