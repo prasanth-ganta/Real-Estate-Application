@@ -25,14 +25,16 @@ public class UserService : IUserService
     }
     public async Task<Response> Login(LoginDTO loginUser)
     {
-        if (!await IsUserExist(loginUser.Email))
+        
+        User user = await  _userRepository.GetUser(loginUser.UserName);
+        if (user== null)
         {
             return new Response(409, "User does not Exist! Need To register First");
         }
-        User user = await  _userRepository.GetUser(loginUser.Email);
-        if (BCrypt.Net.BCrypt.Verify(user.Password, loginUser.Password))
+        if (BCrypt.Net.BCrypt.Verify(loginUser.Password, user.Password))
         {
-            return new Response(200, new { Login_status = "Logged in", Token =  GenerateJwtToken(user)});
+            string token = GenerateJwtToken(user);
+            return new Response(200, new { Login_status = "Logged in", Token = token });
         }
         
         return new Response(401, "InValid Credentials");
@@ -42,7 +44,7 @@ public class UserService : IUserService
     public async Task<Response> Register(RegisterDTO user)
     {
 
-        if (await IsUserExist(user.Email))
+        if (await _userRepository.GetUser(user.UserName) != null)
         {
             return new Response(409, "User Already Exist");
         }
@@ -50,6 +52,9 @@ public class UserService : IUserService
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
         user.Password = hashedPassword;
         User newUser = _mapper.Map<User>(user);
+        newUser.Roles = new List<Role>();
+        Role role = await _userRepository.GetRole(1);
+        newUser.Roles.Add(role);
         await _userRepository.AddUser(newUser);
         return new Response(201, new { user = user.Email, Message = " Successfully Registered" });
     }
@@ -60,11 +65,12 @@ public class UserService : IUserService
 
         var payload = new List<Claim>
         {
-            new Claim(ClaimTypes.Email,user.Email)
+            new Claim(ClaimTypes.Email,user.Email),
+            new Claim(ClaimTypes.Name,user.UserName)
         };
-        foreach (var roles in user.Roles)
+        foreach (Role role in user.Roles)
         {
-            payload.Add(new Claim(ClaimTypes.Role, roles.Name));
+            payload.Add(new Claim(ClaimTypes.Role, role.Name));
         } 
         var token = new JwtSecurityToken
         (
@@ -74,9 +80,5 @@ public class UserService : IUserService
             signingCredentials: Credentials
         );
         return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-    private async Task<bool> IsUserExist(string email)
-    {
-        return await _userRepository.ContainsUser(email);
     }
 }

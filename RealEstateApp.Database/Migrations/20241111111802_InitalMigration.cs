@@ -126,6 +126,23 @@ namespace RealEstateApp.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RoleUser",
+                columns: table => new
+                {
+                    RolesID = table.Column<int>(type: "int", nullable: false),
+                    UsersID = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoleUser", x => new { x.RolesID, x.UsersID });
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -134,6 +151,7 @@ namespace RealEstateApp.Database.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -243,29 +261,24 @@ namespace RealEstateApp.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserRoles",
+                name: "User Roles",
                 columns: table => new
                 {
-                    RolesID = table.Column<int>(type: "int", nullable: false),
-                    UsersID = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
-                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserRoles", x => new { x.RolesID, x.UsersID });
+                    table.PrimaryKey("PK_User Roles", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_UserRoles_Roles_RolesID",
-                        column: x => x.RolesID,
+                        name: "FK_User Roles_Roles_RoleId",
+                        column: x => x.RoleId,
                         principalTable: "Roles",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserRoles_Users_UsersID",
-                        column: x => x.UsersID,
+                        name: "FK_User Roles_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -349,6 +362,26 @@ namespace RealEstateApp.Database.Migrations
                     { 2, null, null, "Admin" }
                 });
 
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "ID", "CreatedBy", "Email", "FirstName", "LastName", "ModifiedBy", "Password", "UserName" },
+                values: new object[,]
+                {
+                    { 1, null, "abdul@example.com", "Abdul", "Shaik", null, "Abdul@123", "abdul" },
+                    { 2, null, "prashanth@example.com", "Prashanth", "Ganta", null, "Prashanth@123", "prashanth" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "User Roles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { 1, 1 },
+                    { 2, 1 },
+                    { 1, 2 },
+                    { 2, 2 }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Documents_PropertyId",
                 table: "Documents",
@@ -401,9 +434,9 @@ namespace RealEstateApp.Database.Migrations
                 column: "SubPropertyTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRoles_UsersID",
-                table: "UserRoles",
-                column: "UsersID");
+                name: "IX_User Roles_RoleId",
+                table: "User Roles",
+                column: "RoleId");
         }
 
         /// <inheritdoc />
@@ -419,7 +452,10 @@ namespace RealEstateApp.Database.Migrations
                 name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "UserRoles");
+                name: "RoleUser");
+
+            migrationBuilder.DropTable(
+                name: "User Roles");
 
             migrationBuilder.DropTable(
                 name: "Properties");

@@ -12,7 +12,7 @@ using RealEstateApp.Database.Data;
 namespace RealEstateApp.Database.Migrations
 {
     [DbContext(typeof(RealEstateDbContext))]
-    [Migration("20241111061719_InitalMigration")]
+    [Migration("20241111111802_InitalMigration")]
     partial class InitalMigration
     {
         /// <inheritdoc />
@@ -547,9 +547,33 @@ namespace RealEstateApp.Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Email = "abdul@example.com",
+                            FirstName = "Abdul",
+                            LastName = "Shaik",
+                            Password = "Abdul@123",
+                            UserName = "abdul"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            Email = "prashanth@example.com",
+                            FirstName = "Prashanth",
+                            LastName = "Ganta",
+                            Password = "Prashanth@123",
+                            UserName = "prashanth"
+                        });
                 });
 
             modelBuilder.Entity("RoleUser", b =>
@@ -583,9 +607,44 @@ namespace RealEstateApp.Database.Migrations
 
                     b.HasKey("RolesID", "UsersID");
 
-                    b.HasIndex("UsersID");
+                    b.ToTable("RoleUser");
+                });
 
-                    b.ToTable("UserRoles", (string)null);
+            modelBuilder.Entity("User Roles", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("User Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            RoleId = 2
+                        });
                 });
 
             modelBuilder.Entity("Favourites", b =>
@@ -684,17 +743,17 @@ namespace RealEstateApp.Database.Migrations
                     b.Navigation("SubPropertyType");
                 });
 
-            modelBuilder.Entity("RoleUser", b =>
+            modelBuilder.Entity("User Roles", b =>
                 {
                     b.HasOne("RealEstateApp.Database.Entities.Role", null)
                         .WithMany()
-                        .HasForeignKey("RolesID")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("RealEstateApp.Database.Entities.User", null)
                         .WithMany()
-                        .HasForeignKey("UsersID")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

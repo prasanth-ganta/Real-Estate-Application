@@ -20,7 +20,7 @@ namespace RealEstateApp.Api.Controllers
             return StatusCode(result.StatusCode,result.Value);
         }
 
-        [HttpGet("Login")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromForm] LoginDTO user)
         {
             var result = await _userService.Login(user);
