@@ -55,7 +55,7 @@ public class UserService : IUserService
     }
     private string GenerateJwtToken(User user)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
         var Credentials = new SigningCredentials(key,SecurityAlgorithms.HmacSha256);
 
         var payload = new List<Claim>
@@ -68,9 +68,9 @@ public class UserService : IUserService
         } 
         var token = new JwtSecurityToken
         (
-            issuer: _configuration["Jwt:Issuer"],
+            issuer: _configuration["JwtSettings:Issuer"],
             claims: payload,
-            expires: DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("Jwt:ExpiryMinutes")),
+            expires: DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("JwtSettings:ExpiryMinutes")),
             signingCredentials: Credentials
         );
         return new JwtSecurityTokenHandler().WriteToken(token);
