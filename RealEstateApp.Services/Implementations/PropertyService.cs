@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Database.Entities;
 using RealEstateApp.Database.Interfaces;
+using RealEstateApp.Services.DTOs;
 using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.Interfaces;
 using RealEstateApp.Services.ResponseType;

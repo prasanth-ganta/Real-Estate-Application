@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RealEstateApp.Services.DTOs;
 using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.Interfaces;
 

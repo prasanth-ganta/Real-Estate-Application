@@ -1,4 +1,5 @@
 using RealEstateApp.Services.DTOs;
+using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.ResponseType;
 
 namespace RealEstateApp.Services.Interfaces;
