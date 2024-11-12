@@ -4,7 +4,7 @@ namespace RealEstateApp.Database.Entities;
 
 public class PropertySubType
 {
-    public int Id { get; set; }  
+    public int ID { get; set; }  
 
     [Required]
     public string Name { get; set; }   

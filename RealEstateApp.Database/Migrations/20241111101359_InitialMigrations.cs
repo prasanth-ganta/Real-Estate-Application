@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RealEstateApp.Database.Migrations
 {
     /// <inheritdoc />
-    public partial class InitalMigration : Migration
+    public partial class InitialMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -75,7 +75,7 @@ namespace RealEstateApp.Database.Migrations
                 name: "PropertySubTypes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
@@ -86,7 +86,7 @@ namespace RealEstateApp.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PropertySubTypes", x => x.Id);
+                    table.PrimaryKey("PK_PropertySubTypes", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -226,7 +226,7 @@ namespace RealEstateApp.Database.Migrations
                         name: "FK_Properties_PropertySubTypes_SubPropertyTypeId",
                         column: x => x.SubPropertyTypeId,
                         principalTable: "PropertySubTypes",
-                        principalColumn: "Id",
+                        principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Properties_PropertyTypes_PropertyTypeId",
@@ -338,6 +338,39 @@ namespace RealEstateApp.Database.Migrations
                     { 1, null, null, "Rent" },
                     { 2, null, null, "Sell" },
                     { 3, null, null, "Unavailable" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PropertySubTypes",
+                columns: new[] { "ID", "CreatedBy", "ModifiedBy", "Name" },
+                values: new object[,]
+                {
+                    { 1, null, null, "BHK1" },
+                    { 2, null, null, "BHK2" },
+                    { 3, null, null, "BHK3" },
+                    { 4, null, null, "BHK4" },
+                    { 5, null, null, "Office" },
+                    { 6, null, null, "Retail" },
+                    { 7, null, null, "Industrial" },
+                    { 8, null, null, "VacantLand" },
+                    { 9, null, null, "AgricultureLand" },
+                    { 10, null, null, "RecreationalLand" },
+                    { 11, null, null, "Hotel" },
+                    { 12, null, null, "Hospital" },
+                    { 13, null, null, "School" },
+                    { 14, null, null, "OldAgeHome" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PropertyTypes",
+                columns: new[] { "ID", "CreatedBy", "ModifiedBy", "Name" },
+                values: new object[,]
+                {
+                    { 1, null, null, "Residential" },
+                    { 2, null, null, "Commercial" },
+                    { 3, null, null, "Land" },
+                    { 4, null, null, "SpecialPurpose" },
+                    { 5, null, null, "Luxuary" }
                 });
 
             migrationBuilder.InsertData(

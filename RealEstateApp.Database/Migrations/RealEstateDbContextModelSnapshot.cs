@@ -375,11 +375,11 @@ namespace RealEstateApp.Database.Migrations
 
             modelBuilder.Entity("RealEstateApp.Database.Entities.PropertySubType", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -406,9 +406,81 @@ namespace RealEstateApp.Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ID");
 
                     b.ToTable("PropertySubTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Name = "BHK1"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            Name = "BHK2"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            Name = "BHK3"
+                        },
+                        new
+                        {
+                            ID = 4,
+                            Name = "BHK4"
+                        },
+                        new
+                        {
+                            ID = 5,
+                            Name = "Office"
+                        },
+                        new
+                        {
+                            ID = 6,
+                            Name = "Retail"
+                        },
+                        new
+                        {
+                            ID = 7,
+                            Name = "Industrial"
+                        },
+                        new
+                        {
+                            ID = 8,
+                            Name = "VacantLand"
+                        },
+                        new
+                        {
+                            ID = 9,
+                            Name = "AgricultureLand"
+                        },
+                        new
+                        {
+                            ID = 10,
+                            Name = "RecreationalLand"
+                        },
+                        new
+                        {
+                            ID = 11,
+                            Name = "Hotel"
+                        },
+                        new
+                        {
+                            ID = 12,
+                            Name = "Hospital"
+                        },
+                        new
+                        {
+                            ID = 13,
+                            Name = "School"
+                        },
+                        new
+                        {
+                            ID = 14,
+                            Name = "OldAgeHome"
+                        });
                 });
 
             modelBuilder.Entity("RealEstateApp.Database.Entities.PropertyType", b =>
@@ -447,6 +519,33 @@ namespace RealEstateApp.Database.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("PropertyTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Name = "Residential"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            Name = "Commercial"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            Name = "Land"
+                        },
+                        new
+                        {
+                            ID = 4,
+                            Name = "SpecialPurpose"
+                        },
+                        new
+                        {
+                            ID = 5,
+                            Name = "Luxuary"
+                        });
                 });
 
             modelBuilder.Entity("RealEstateApp.Database.Entities.Role", b =>
