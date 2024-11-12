@@ -31,7 +31,7 @@ private readonly RealEstateDbContext _context;
     {
         try
         {
-            return await _context.Users.Include(roles => roles.Roles).SingleAsync(u => u.UserName == userName);
+            return await _context.Users.Include(roles => roles.Roles).FirstAsync(u => u.UserName == userName);
         }
         catch (InvalidOperationException)
         {

@@ -16,10 +16,12 @@ namespace RealEstateApp.Services.ServiceExtensions;
 public static class ConfigurationServicesExtension
 {
     public static void ConfigurationServices(this IServiceCollection services,IConfiguration configuration){
+        services.AddHttpContextAccessor();
         services.AddScoped<IUserRepository,UserRepository>();
         services.AddScoped<IUserService,UserService>();
+        services.AddScoped<IPropertyRepository,PropertyRepository>();
+        services.AddScoped<IPropertyService,PropertyService>();
         services.AddAutoMapper(typeof(MappingProfiles));
-        services.AddHttpContextAccessor();
         services.AddDbContext<RealEstateDbContext>
         (
             options => {

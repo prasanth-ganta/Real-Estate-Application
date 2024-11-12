@@ -7,7 +7,7 @@ namespace RealEstateApp.Database.Data;
 public class RealEstateDbContext : DbContext
 {
     // private readonly ICurrentUser _currentUser;
-    
+
     public RealEstateDbContext(DbContextOptions<RealEstateDbContext> options) : base(options)
     {
         // _currentUser = currentUser;
@@ -32,7 +32,7 @@ public class RealEstateDbContext : DbContext
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {
             modelBuilder.Entity(entity.Name).Property<DateTime>("CreatedAt").HasDefaultValueSql("GETDATE()");
-            modelBuilder.Entity(entity.Name).Property<DateTime?>("ModifiedAt").HasDefaultValueSql("GETDATE()");;
+            modelBuilder.Entity(entity.Name).Property<DateTime?>("ModifiedAt").HasDefaultValueSql("GETDATE()"); ;
             modelBuilder.Entity(entity.Name).Property<string>("CreatedBy");
             modelBuilder.Entity(entity.Name).Property<string>("ModifiedBy");
             modelBuilder.Entity(entity.Name).Property<bool>("IsActive").HasDefaultValueSql("1");
@@ -54,26 +54,51 @@ public class RealEstateDbContext : DbContext
             new PropertyStatus { ID = 3, Status = "Unavailable" }
         );
 
-        modelBuilder.ApplyConfiguration( new UserConfig());
-        modelBuilder.ApplyConfiguration( new PropertyConfig());
-        modelBuilder.ApplyConfiguration( new DocumentConfig());
-        modelBuilder.ApplyConfiguration( new LocationConfig());
-        modelBuilder.ApplyConfiguration( new MessageConfig());
+
+        // Seed PropertyType data 
+        modelBuilder.Entity<PropertyType>().HasData(
+            new PropertyType { ID = (int)Utility.Enumerations.PropertyTypeEnum.Residential, Name = "Residential" }, 
+            new PropertyType { ID = (int)Utility.Enumerations.PropertyTypeEnum.Commercial, Name = "Commercial" }, 
+            new PropertyType { ID = (int)Utility.Enumerations.PropertyTypeEnum.Land, Name = "Land" }, 
+            new PropertyType { ID = (int)Utility.Enumerations.PropertyTypeEnum.SpecialPurpose, Name = "Special Purpose" }, 
+            new PropertyType { ID = (int)Utility.Enumerations.PropertyTypeEnum.Luxuary, Name = "Luxury" }); 
+
+            // Seed PropertySubType data 
+            modelBuilder.Entity<PropertySubType>().HasData( new PropertySubType { Id = 1, Name = "BHK1" },
+            new PropertySubType { Id = 2, Name = "BHK2" }, 
+            new PropertySubType { Id = 3, Name = "BHK3" }, 
+            new PropertySubType { Id = 4, Name = "BHK4" }, 
+            new PropertySubType { Id = 5, Name = "Office" }, 
+            new PropertySubType { Id = 6, Name = "Retail" }, 
+            new PropertySubType { Id = 7, Name = "Industrial" }, 
+            new PropertySubType { Id = 8, Name = "VacantLand" }, 
+            new PropertySubType { Id = 9, Name = "AgricultureLand" }, 
+            new PropertySubType { Id = 10, Name = "RecreationalLand" }, 
+            new PropertySubType { Id = 11, Name = "Hotel" }, 
+            new PropertySubType { Id = 12, Name = "Hospital" }, 
+            new PropertySubType { Id = 13, Name = "School" },
+             new PropertySubType { Id = 14, Name = "OldAgeHome" } );
+
+        modelBuilder.ApplyConfiguration(new UserConfig());
+        modelBuilder.ApplyConfiguration(new PropertyConfig());
+        modelBuilder.ApplyConfiguration(new DocumentConfig());
+        modelBuilder.ApplyConfiguration(new LocationConfig());
+        modelBuilder.ApplyConfiguration(new MessageConfig());
     }
     public override int SaveChanges()
     {
         var entries = ChangeTracker.Entries();
         foreach (var entry in entries)
         {
-            if(entry.State == EntityState.Added)
+            if (entry.State == EntityState.Added)
             {
                 entry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
-                entry.Property("CreatedBy").CurrentValue = "fgh"; 
+                entry.Property("CreatedBy").CurrentValue = "fgh";
             }
-            else if(entry.State == EntityState.Modified)
+            else if (entry.State == EntityState.Modified)
             {
                 entry.Property("ModifiedBy").CurrentValue = DateTime.UtcNow;
-                entry.Property("CreatedBy").CurrentValue = "_currentUser.GetCurrentUserName()"; 
+                entry.Property("CreatedBy").CurrentValue = "_currentUser.GetCurrentUserName()";
             }
         }
         return base.SaveChanges();

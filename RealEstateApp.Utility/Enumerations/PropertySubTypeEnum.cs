@@ -1,6 +1,9 @@
+using System.Text.Json.Serialization;
+
 namespace RealEstateApp.Utility.Enumerations;
 
-public enum SubPropertyType
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum PropertySubTypeEnum
 {
     BHK1 = 1,
     BHK2,
