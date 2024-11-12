@@ -23,6 +23,12 @@ public class UserService : IUserService
         _userRepository = userRepository;
         _configuration = configuration;
     }
+
+    public Response GetAllUsers()
+    {
+        return new Response(200,_userRepository.GetAllUsers());
+    }
+
     public async Task<Response> Login(LoginDTO loginUser)
     {
         
@@ -66,7 +72,8 @@ public class UserService : IUserService
         var payload = new List<Claim>
         {
             new Claim(ClaimTypes.Email,user.Email),
-            new Claim(ClaimTypes.Name,user.UserName)
+            new Claim(ClaimTypes.Name,user.UserName),
+            new Claim("userId",user.ID.ToString())
         };
         foreach (Role role in user.Roles)
         {

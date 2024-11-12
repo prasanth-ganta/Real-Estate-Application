@@ -1,6 +1,9 @@
+using System.Text.Json.Serialization;
+
 namespace RealEstateApp.Utility.Enumerations;
 
-public enum PropertyType
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum PropertyTypeEnum
 {
     Residential = 1,
     Commercial,
