@@ -2,11 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RealEstateApp.Services.DTOs.RequestDTOs;
 
-public class LoginDTO
+public class DocumentDTO
 {
     [Required]
-    public string UserName { get; set; }
-    
+    [Url]
+    public string Url {get;set;}
+
     [Required]
-    public string Password { get; set; }
+    public string Description {get;set;}
 }

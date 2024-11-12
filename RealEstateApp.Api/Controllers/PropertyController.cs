@@ -1,5 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RealEstateApp.Services.DTOs;
 using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.Interfaces;
 
@@ -14,6 +14,24 @@ public class PropertyController : ControllerBase
     {
         _propertyService = propertyService;
     }
+
+    [Authorize(Roles = "User,Admin")]
+    [HttpPost("CreateProperty")]
+    public async Task<IActionResult> CreateProperty([FromForm] PropertyDTO property)
+    {
+        var result = await _propertyService.CreateProperty(property);
+        return StatusCode(result.StatusCode, result.Value);
+    }
+
+    [Authorize(Roles = "User,Admin")]
+    [HttpPost("GetOwnedProperties")]
+    public async Task<IActionResult> GetOwnedProperties()
+    {
+        var result = await _propertyService.GetOwnedProperties();
+        return StatusCode(result.StatusCode, result.Value);
+    }
+
+
 
     // Buy Endpoints
     [HttpGet("buy/by-location")]
@@ -75,23 +93,23 @@ public class PropertyController : ControllerBase
     }
 
     [HttpGet("exclude/{userId}")]
-    public async Task<IActionResult> GetAllProperties (int userId)
+    public async Task<IActionResult> GetAllProperties(int userId)
     {
-        IEnumerable<PropertySearchResultDto> properties = await _propertyService.GetAllProperties (userId);
+        IEnumerable<PropertySearchResultDto> properties = await _propertyService.GetAllProperties(userId);
         return Ok(properties);
     }
 
     [HttpGet("owned/{userId}")]
-    public async Task<IActionResult> GetOwnedPropertiesByUser (int userId)
+    public async Task<IActionResult> GetOwnedPropertiesByUser(int userId)
     {
-        IEnumerable<PropertySearchResultDto> properties = await _propertyService.GetOwnedPropertiesByUser (userId);
+        IEnumerable<PropertySearchResultDto> properties = await _propertyService.GetOwnedPropertiesByUser(userId);
         return Ok(properties);
     }
 
     [HttpGet("favorites/{userId}")]
-    public async Task<IActionResult> GetFavoritePropertiesByUser (int userId)
+    public async Task<IActionResult> GetFavoritePropertiesByUser(int userId)
     {
-        IEnumerable<PropertySearchResultDto> properties = await _propertyService.GetFavoritePropertiesByUser (userId);
+        IEnumerable<PropertySearchResultDto> properties = await _propertyService.GetFavoritePropertiesByUser(userId);
         return Ok(properties);
     }
 

@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using RealEstateApp.Database.Data;
 using RealEstateApp.Database.Entities;
 using RealEstateApp.Database.Interfaces;
 
@@ -5,18 +7,40 @@ namespace RealEstateApp.Database.Implementations;
 
 public class UserRepository : IUserRepository
 {
-    public Task<bool> AddUser(User user)
+private readonly RealEstateDbContext _context;
+
+    public UserRepository(RealEstateDbContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
     }
 
-    public Task<bool> ContainsUser(string email)
+    public async Task<bool> AddUser (User user)
     {
-        throw new NotImplementedException();
+        await _context.Users.AddAsync(user);
+        _context.Entry(user).Property<bool>("IsActive").CurrentValue = false;
+        _context.SaveChanges();
+        return true;
     }
 
-    public Task<User> GetUser(string email)
+    public async Task<Role> GetRole(int roleId)
     {
-        throw new NotImplementedException();
+        return await _context.Roles.FindAsync(roleId);
+    }
+
+    public async Task<User> GetUser (string userName)
+    {
+        try
+        {
+            return await _context.Users.Include(roles => roles.Roles).FirstAsync(u => u.UserName == userName);
+        }
+        catch (InvalidOperationException)
+        {
+            return null;
+        }
+    }
+
+    public List<User> GetAllUsers()
+    {
+        return _context.Users.Include(u => u.OwnedProperties).ToList();
     }
 }

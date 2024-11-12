@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.Interfaces;
@@ -20,10 +21,18 @@ namespace RealEstateApp.Api.Controllers
             return StatusCode(result.StatusCode,result.Value);
         }
 
-        [HttpGet("Login")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromForm] LoginDTO user)
         {
             var result = await _userService.Login(user);
+            return StatusCode(result.StatusCode,result.Value);
+        }
+
+        [Authorize(Roles ="Admin")]
+        [HttpGet("AllUsers")]
+        public IActionResult GetAllUsers()
+        {
+            var result =  _userService.GetAllUsers();
             return StatusCode(result.StatusCode,result.Value);
         }
     }

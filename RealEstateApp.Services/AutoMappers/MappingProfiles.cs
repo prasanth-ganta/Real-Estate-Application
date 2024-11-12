@@ -8,8 +8,8 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
-        CreateMap<RegisterDTO,User>();
-        CreateMap<LoginDTO,User>();
+        CreateMap<RegisterDTO, User>();
+        CreateMap<LoginDTO, User>();
         CreateMap<PropertySearchResultDto,Property>().ReverseMap();
     }
 }

@@ -12,8 +12,8 @@ using RealEstateApp.Database.Data;
 namespace RealEstateApp.Database.Migrations
 {
     [DbContext(typeof(RealEstateDbContext))]
-    [Migration("20241111101359_InitialMigrations")]
-    partial class InitialMigrations
+    [Migration("20241111184547_Migration4")]
+    partial class Migration4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,7 +59,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasDefaultValueSql("1");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .ValueGeneratedOnAdd()
@@ -112,7 +112,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasDefaultValueSql("1");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .ValueGeneratedOnAdd()
@@ -167,7 +167,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasDefaultValueSql("1");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .ValueGeneratedOnAdd()
@@ -212,7 +212,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasDefaultValueSql("1");
 
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
@@ -267,7 +267,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasDefaultValueSql("1");
 
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
@@ -340,7 +340,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasDefaultValueSql("1");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .ValueGeneratedOnAdd()
@@ -378,11 +378,11 @@ namespace RealEstateApp.Database.Migrations
 
             modelBuilder.Entity("RealEstateApp.Database.Entities.PropertySubType", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -395,7 +395,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasDefaultValueSql("1");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .ValueGeneratedOnAdd()
@@ -409,79 +409,79 @@ namespace RealEstateApp.Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.ToTable("PropertySubTypes");
 
                     b.HasData(
                         new
                         {
-                            ID = 1,
+                            Id = 1,
                             Name = "BHK1"
                         },
                         new
                         {
-                            ID = 2,
+                            Id = 2,
                             Name = "BHK2"
                         },
                         new
                         {
-                            ID = 3,
+                            Id = 3,
                             Name = "BHK3"
                         },
                         new
                         {
-                            ID = 4,
+                            Id = 4,
                             Name = "BHK4"
                         },
                         new
                         {
-                            ID = 5,
+                            Id = 5,
                             Name = "Office"
                         },
                         new
                         {
-                            ID = 6,
+                            Id = 6,
                             Name = "Retail"
                         },
                         new
                         {
-                            ID = 7,
+                            Id = 7,
                             Name = "Industrial"
                         },
                         new
                         {
-                            ID = 8,
+                            Id = 8,
                             Name = "VacantLand"
                         },
                         new
                         {
-                            ID = 9,
+                            Id = 9,
                             Name = "AgricultureLand"
                         },
                         new
                         {
-                            ID = 10,
+                            Id = 10,
                             Name = "RecreationalLand"
                         },
                         new
                         {
-                            ID = 11,
+                            Id = 11,
                             Name = "Hotel"
                         },
                         new
                         {
-                            ID = 12,
+                            Id = 12,
                             Name = "Hospital"
                         },
                         new
                         {
-                            ID = 13,
+                            Id = 13,
                             Name = "School"
                         },
                         new
                         {
-                            ID = 14,
+                            Id = 14,
                             Name = "OldAgeHome"
                         });
                 });
@@ -505,7 +505,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasDefaultValueSql("1");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .ValueGeneratedOnAdd()
@@ -542,12 +542,12 @@ namespace RealEstateApp.Database.Migrations
                         new
                         {
                             ID = 4,
-                            Name = "SpecialPurpose"
+                            Name = "Special Purpose"
                         },
                         new
                         {
                             ID = 5,
-                            Name = "Luxuary"
+                            Name = "Luxury"
                         });
                 });
 
@@ -570,7 +570,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasDefaultValueSql("1");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .ValueGeneratedOnAdd()
@@ -628,7 +628,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasDefaultValueSql("1");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -646,9 +646,33 @@ namespace RealEstateApp.Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Email = "abdul@example.com",
+                            FirstName = "Abdul",
+                            LastName = "Shaik",
+                            Password = "$2a$11$nTNcMsvwvhSJ8oL04oBo1On5QVEKeZw9zrn1BHUNOq6E3noly5lLy",
+                            UserName = "abdul"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            Email = "prashanth@example.com",
+                            FirstName = "Prashanth",
+                            LastName = "Ganta",
+                            Password = "$2a$11$FlmD7c.KL6zg8t8uljvFFOnWBACcDGlpw6R8UU8QWhsc8tCDzReka",
+                            UserName = "prashanth"
+                        });
                 });
 
             modelBuilder.Entity("RoleUser", b =>
@@ -670,7 +694,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasDefaultValueSql("1");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .ValueGeneratedOnAdd()
@@ -682,9 +706,44 @@ namespace RealEstateApp.Database.Migrations
 
                     b.HasKey("RolesID", "UsersID");
 
-                    b.HasIndex("UsersID");
+                    b.ToTable("RoleUser");
+                });
 
-                    b.ToTable("UserRoles", (string)null);
+            modelBuilder.Entity("User Roles", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("User Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            UserId = 1,
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            RoleId = 2
+                        });
                 });
 
             modelBuilder.Entity("Favourites", b =>
@@ -783,17 +842,17 @@ namespace RealEstateApp.Database.Migrations
                     b.Navigation("SubPropertyType");
                 });
 
-            modelBuilder.Entity("RoleUser", b =>
+            modelBuilder.Entity("User Roles", b =>
                 {
                     b.HasOne("RealEstateApp.Database.Entities.Role", null)
                         .WithMany()
-                        .HasForeignKey("RolesID")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("RealEstateApp.Database.Entities.User", null)
                         .WithMany()
-                        .HasForeignKey("UsersID")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
