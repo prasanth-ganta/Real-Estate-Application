@@ -8,5 +8,7 @@ public class Role
     
     [Required]
     public string Name { get; set; }
+    public bool IsActive { get; set; } = true;
+
     public ICollection<User> Users { get; set; }
 }

@@ -21,6 +21,8 @@ public static class ConfigurationServicesExtension
         services.AddScoped<IUserService,UserService>();
         services.AddScoped<IPropertyRepository,PropertyRepository>();
         services.AddScoped<IPropertyService,PropertyService>();
+        services.AddScoped<IMessageRepository,MessageRepository>();
+        services.AddScoped<IMessageService,MessageService>();
         services.AddAutoMapper(typeof(MappingProfiles));
         services.AddDbContext<RealEstateDbContext>
         (
