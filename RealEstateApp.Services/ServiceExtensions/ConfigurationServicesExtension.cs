@@ -20,6 +20,9 @@ public static class ConfigurationServicesExtension
         services.AddScoped<IUserRepository,UserRepository>();
         services.AddScoped<IUserService,UserService>();
         services.AddScoped<IPropertyRepository,PropertyRepository>();
+        services.AddScoped<IDocumentRepository,DocumentRepository>();
+        services.AddScoped<IDocumentService,DocumentService>();
+        services.AddScoped<ILoginUserDetailsService,LoginUserDetailsService>();
         services.AddScoped<IPropertyService,PropertyService>();
         services.AddScoped<IMessageRepository,MessageRepository>();
         services.AddScoped<IMessageService,MessageService>();

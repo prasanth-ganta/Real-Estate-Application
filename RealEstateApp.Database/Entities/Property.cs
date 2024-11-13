@@ -12,7 +12,7 @@ public class Property
      
     //ForignKeys
     public int PropertyTypeId { get; set; }  
-    public int SubPropertyTypeId { get; set; } 
+    public int SubPropertyTypeId { get; set; }        
     public int OwnerId { get; set; }
     public int LocationId { get; set; }
     public int ApprovalStatusId { get; set; }

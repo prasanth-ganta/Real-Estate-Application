@@ -13,7 +13,7 @@ public enum PropertySubTypeEnum
     Retail,
     Industrial,
     VacantLand,
-    AggricultureLand,
+    AgricultureLand,
     RecreationalLand,
     Hotel,
     Hospital,

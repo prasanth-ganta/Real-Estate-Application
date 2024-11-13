@@ -8,7 +8,7 @@ public class DocumentConfig : IEntityTypeConfiguration<Document>
 {
     public void Configure(EntityTypeBuilder<Document> builder)
     {
-        builder.Property(d => d.Url)
+        builder.Property(d => d.FileName)
             .IsRequired();
 
         builder.Property(d => d.Description)

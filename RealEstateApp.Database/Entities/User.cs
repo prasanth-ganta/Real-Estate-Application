@@ -19,11 +19,11 @@ public class User
     public bool IsActive { get; set; } = true;
 
 
-
     //Namvigation Properties
     public ICollection<Role> Roles { get; set; }
     public ICollection<Property> OwnedProperties { get; set; }
     public ICollection<Message> ReceivedMessages { get; set; }
     public ICollection<Message> SentMessages { get; set; }
     public ICollection<Property> FavouriteProperties { get; set; }
+    
 }

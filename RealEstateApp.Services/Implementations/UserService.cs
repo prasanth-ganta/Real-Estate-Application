@@ -17,6 +17,7 @@ public class UserService : IUserService
     private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
     private readonly IConfiguration _configuration;
+
     public UserService(IMapper mapper, IUserRepository userRepository, IConfiguration configuration)
     {
         _mapper = mapper;
@@ -26,14 +27,13 @@ public class UserService : IUserService
 
     public Response GetAllUsers()
     {
-        return new Response(200,_userRepository.GetAllUsers());
+        return new Response(200, _userRepository.GetAllUsers());
     }
 
     public async Task<Response> Login(LoginDTO loginUser)
     {
-        
-        User user = await  _userRepository.GetUser(loginUser.UserName);
-        if (user== null)
+        User user = await _userRepository.GetUser(loginUser.UserName);
+        if (user == null)
         {
             return new Response(409, "User does not Exist! Need To register First");
         }
@@ -42,19 +42,17 @@ public class UserService : IUserService
             string token = GenerateJwtToken(user);
             return new Response(200, new { Login_status = "Logged in", Token = token });
         }
-        
-        return new Response(401, "InValid Credentials");
 
+        return new Response(401, "InValid Credentials");
     }
 
     public async Task<Response> Register(RegisterDTO user)
     {
-
         if (await _userRepository.GetUser(user.UserName) != null)
         {
             return new Response(409, "User Already Exist");
         }
-
+        
         var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
         user.Password = hashedPassword;
         User newUser = _mapper.Map<User>(user);
@@ -64,26 +62,30 @@ public class UserService : IUserService
         await _userRepository.AddUser(newUser);
         return new Response(201, new { user = user.Email, Message = " Successfully Registered" });
     }
+
     private string GenerateJwtToken(User user)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
-        var Credentials = new SigningCredentials(key,SecurityAlgorithms.HmacSha256);
+        var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"])
+        );
+        var Credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var payload = new List<Claim>
         {
-            new Claim(ClaimTypes.Email,user.Email),
-            new Claim(ClaimTypes.Name,user.UserName),
-            new Claim("userId",user.ID.ToString())
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim("userId", user.ID.ToString()),
         };
         foreach (Role role in user.Roles)
         {
             payload.Add(new Claim(ClaimTypes.Role, role.Name));
-        } 
-        var token = new JwtSecurityToken
-        (
+        }
+        var token = new JwtSecurityToken(
             issuer: _configuration["JwtSettings:Issuer"],
             claims: payload,
-            expires: DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("JwtSettings:ExpiryMinutes")),
+            expires: DateTime.UtcNow.AddMinutes(
+                _configuration.GetValue<int>("JwtSettings:ExpiryMinutes")
+            ),
             signingCredentials: Credentials
         );
         return new JwtSecurityTokenHandler().WriteToken(token);
