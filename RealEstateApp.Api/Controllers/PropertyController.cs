@@ -89,7 +89,7 @@ public class PropertyController : ControllerBase
         [FromQuery] string city,
         [FromQuery] string state)
     {
-        IEnumerable<PropertySearchResultDto> properties = await _propertyService.SearchPropertiesForBuyByLocation(city, state);
+        IEnumerable<PropertyResponseDTO> properties = await _propertyService.SearchPropertiesForBuyByLocation(city, state);
         return Ok(properties);
     }
 
@@ -99,7 +99,7 @@ public class PropertyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SearchPropertiesForBuyByPincode([FromQuery] int zipCode)
     {
-        IEnumerable<PropertySearchResultDto> properties = await _propertyService.SearchPropertiesForBuyByPincode(zipCode);
+        IEnumerable<PropertyResponseDTO> properties = await _propertyService.SearchPropertiesForBuyByPincode(zipCode);
         return Ok(properties);
     }
 
@@ -111,7 +111,7 @@ public class PropertyController : ControllerBase
         [FromQuery] double minPrice,
         [FromQuery] double maxPrice)
     {
-        IEnumerable<PropertySearchResultDto> properties = await _propertyService.SearchPropertiesForBuyByPriceRange(minPrice, maxPrice);
+        IEnumerable<PropertyResponseDTO> properties = await _propertyService.SearchPropertiesForBuyByPriceRange(minPrice, maxPrice);
         return Ok(properties);
     }
 
@@ -123,7 +123,7 @@ public class PropertyController : ControllerBase
         [FromQuery] string city,
         [FromQuery] string state)
     {
-        IEnumerable<PropertySearchResultDto> properties = await _propertyService.SearchPropertiesForRentByLocation(city, state);
+        IEnumerable<PropertyResponseDTO> properties = await _propertyService.SearchPropertiesForRentByLocation(city, state);
         return Ok(properties);
     }
 
@@ -155,7 +155,7 @@ public class PropertyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SearchPropertiesForRentByName([FromQuery] string propertyName)
     {
-        IEnumerable<PropertySearchResultDto> properties = await _propertyService.SearchPropertiesForRentByName(propertyName);
+        IEnumerable<PropertyResponseDTO> properties = await _propertyService.SearchPropertiesForRentByName(propertyName);
         return Ok(properties);
     }
 

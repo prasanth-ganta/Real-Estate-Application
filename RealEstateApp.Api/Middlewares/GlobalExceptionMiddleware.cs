@@ -2,10 +2,10 @@ using System.Text.Json;
 
 namespace RealEstateApp.Api.Middlewares;
 
-public class GlobalException
+public class GlobalExceptionMiddleware
 {
     private RequestDelegate _next;
-    public GlobalException(RequestDelegate next)
+    public GlobalExceptionMiddleware(RequestDelegate next)
     {
         _next = next;
     }
