@@ -22,36 +22,36 @@ public class PropertyRepository : IPropertyRepository
 
     public async Task<List<Property>> GetAllPendingProperties()
     {
-        IQueryable<Property> query = LoadAllProperties()
+        IQueryable<Property> propertyList = LoadAllProperties()
             .Where(p => p.ApprovalStatusID == (int)ApprovalStatusEnum.Pending);
 
-        return await query.ToListAsync();
+        return await propertyList.ToListAsync();
     }
 
     public async Task<List<Property>> GetAllProperties(PropertyListingTypeEnum propertyListingType)
     {
-        IQueryable<Property> query = LoadAllProperties()
+        IQueryable<Property> propertyList = LoadAllProperties()
             .Where(p => p.ApprovalStatusID == (int)ApprovalStatusEnum.Approved);
 
         if (propertyListingType != PropertyListingTypeEnum.All)
         {
-            query = query.Where(p => p.PropertyStatusID == (int)propertyListingType);
+            propertyList = propertyList.Where(p => p.PropertyStatusID == (int)propertyListingType);
         }
 
-        return await query.ToListAsync();
+        return await propertyList.ToListAsync();
     }
 
     public async Task<List<Property>> GetOwnedProperties(int ownerID, PropertyListingTypeEnum propertyListingType)
     {
-        IQueryable<Property> query = LoadAllProperties()
+        IQueryable<Property> propertyList = LoadAllProperties()
             .Where(p => p.OwnerID == ownerID);
 
         if (propertyListingType != PropertyListingTypeEnum.All)
         {
-            query = query.Where(p => p.PropertyStatusID == (int)propertyListingType);
+            propertyList = propertyList.Where(p => p.PropertyStatusID == (int)propertyListingType);
         }
 
-        return await query.ToListAsync();
+        return await propertyList.ToListAsync();
     }
 
     public async Task<bool> SoftDeleteProperty(int id, string username)
@@ -67,7 +67,7 @@ public class PropertyRepository : IPropertyRepository
 
     private IQueryable<Property> LoadAllProperties()
     {
-        IQueryable<Property> query = _realEstateDbContext.Properties
+        IQueryable<Property> propertyList = _realEstateDbContext.Properties
             .Include(p => p.Owner)
             .Include(p => p.ApprovalStatus)
             .Include(p => p.PropertyStatus)
@@ -76,7 +76,7 @@ public class PropertyRepository : IPropertyRepository
             .Include(p => p.Documents)
             .Include(p => p.Location)
             .Where(p => p.IsActive == true);
-        return query;
+        return propertyList;
     }
     public async Task AddProperty(Property newProperty)
     {
@@ -259,14 +259,14 @@ public class PropertyRepository : IPropertyRepository
 
     public async Task<List<Property>> GetFavorites(int ownerID, PropertyListingTypeEnum propertyListingType)
     {
-        IQueryable<Property> query = LoadAllProperties().Where(p => p.FavouritedByUsers.Any(u => u.ID == ownerID));
+        IQueryable<Property> propertyList = LoadAllProperties().Where(p => p.FavouritedByUsers.Any(u => u.ID == ownerID));
 
         if (propertyListingType != PropertyListingTypeEnum.All)
         {
-            query = query.Where(p => p.PropertyStatusID == (int)propertyListingType);
+            propertyList = propertyList.Where(p => p.PropertyStatusID == (int)propertyListingType);
         }
 
-        return await query.ToListAsync();
+        return await propertyList.ToListAsync();
 
     }
 }
