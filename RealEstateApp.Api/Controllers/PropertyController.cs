@@ -37,17 +37,17 @@ public class PropertyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [Authorize(Roles = "User,Admin")]
     [HttpGet("GetOwnedProperties")]
-    public async Task<IActionResult> GetOwnedProperties(PropertyListingTypeEnum retivalOption)
+    public async Task<IActionResult> GetOwnedProperties(PropertyListingTypeEnum propertyListingType)
     {
-        var result = await _propertyService.GetOwnedProperties(retivalOption);
+        var result = await _propertyService.GetOwnedProperties(propertyListingType);
         return StatusCode(result.StatusCode, result.Value);
     }
 
     [Authorize(Roles = "User,Admin")]
     [HttpGet("GetAllProperties")]
-    public async Task<IActionResult> GetAllProperties(PropertyListingTypeEnum retivalOption)
+    public async Task<IActionResult> GetAllProperties(PropertyListingTypeEnum propertyListingType)
     {
-        var result = await _propertyService.GetAllProperties(retivalOption);
+        var result = await _propertyService.GetAllProperties(propertyListingType);
         return StatusCode(result.StatusCode, result.Value);
     }
 
@@ -60,22 +60,22 @@ public class PropertyController : ControllerBase
     }
 
     [Authorize(Roles = "User,Admin")]
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteProperty(int id)
+    [HttpDelete("{ID}")]
+    public async Task<IActionResult> DeleteProperty(int ID)
     {
-        var result = await _propertyService.SoftDeleteProperty(id);
+        var result = await _propertyService.SoftDeleteProperty(ID);
         return StatusCode(result.StatusCode, result.Value);
 
     }
 
-    [HttpPut("UpdateProperty{id}")]
+    [HttpPut("UpdateProperty{ID}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UpdatePropertyStatus(int id, PropertyListingTypeEnum propertyListingType)
+    public async Task<IActionResult> UpdatePropertyStatus(int ID, PropertyListingTypeEnum propertyListingType)
     {
-        var result = await _propertyService.UpdatePropertyStatus(id, propertyListingType);
+        var result = await _propertyService.UpdatePropertyStatus(ID, propertyListingType);
         return StatusCode(result.StatusCode, result.Value);
     }
 
@@ -157,24 +157,24 @@ public class PropertyController : ControllerBase
         return Ok(properties);
     }
 
-    [HttpPost("addFavourites/{propertyId}")]
+    [HttpPost("addFavourites/{propertyID}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> AddToFavorites(int propertyId)
+    public async Task<IActionResult> AddToFavorites(int propertyID)
     {
-        var result = await _propertyService.AddToFavorites(propertyId);
+        var result = await _propertyService.AddToFavorites(propertyID);
         return StatusCode(result.StatusCode, result);
     }
 
-    [HttpDelete("removeFavourites/{propertyId}")]
+    [HttpDelete("removeFavourites/{propertyID}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> RemoveFromFavorites(int propertyId)
+    public async Task<IActionResult> RemoveFromFavorites(int propertyID)
     {
-        var result = await _propertyService.RemoveFromFavorites(propertyId);
+        var result = await _propertyService.RemoveFromFavorites(propertyID);
         return StatusCode(result.StatusCode, result);
     }
 

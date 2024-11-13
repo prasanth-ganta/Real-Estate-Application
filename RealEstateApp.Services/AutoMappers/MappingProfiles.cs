@@ -19,10 +19,10 @@ public class MappingProfiles : Profile
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
-            .ForMember(dest => dest.EmailId, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.EmailID, opt => opt.MapFrom(src => src.Email))
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))
             .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
-        CreateMap<PropertySearchResultDto,Property>().ReverseMap();
+        //CreateMap<PropertySearchResultDto,Property>().ReverseMap();
         CreateMap<PropertyDTO,Property>().ReverseMap();
     }
 }

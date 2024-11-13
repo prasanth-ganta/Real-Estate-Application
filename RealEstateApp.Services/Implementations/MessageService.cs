@@ -23,16 +23,16 @@ public class MessageService : IMessageService
         _mapper = mapper;
     }
 
-    public async Task<Response> GetMessagesBetweenUsersAsync(int receiverId)
+    public async Task<Response> GetMessagesBetweenUsersAsync(int receiverID)
     {
-        var userIdClaim = _httpContext.HttpContext.User.FindFirst("userId");
-        if (userIdClaim == null)
+        var userIDClaim = _httpContext.HttpContext.User.FindFirst("userID");
+        if (userIDClaim == null)
         {
             return new Response(400, "User ID not found in claims");
         } 
-        int senderId = int.Parse(userIdClaim.Value);
+        int senderID = int.Parse(userIDClaim.Value);
 
-        List<Message> messages = await _messageRepository.GetMessagesBetweenUsersAsync(senderId,receiverId);
+        List<Message> messages = await _messageRepository.GetMessagesBetweenUsersAsync(senderID,receiverID);
         if(messages == null)
         {
             return new Response(404, "No Content Found");
@@ -44,17 +44,17 @@ public class MessageService : IMessageService
 
     public async Task<Response> SendMessageAsync(SendMessageRequestDTO sendMessage)
     {
-        var userIdClaim = _httpContext.HttpContext.User.FindFirst("userId");
+        var userIDClaim = _httpContext.HttpContext.User.FindFirst("userID");
         var userNameClaim = _httpContext.HttpContext.User.FindFirst(ClaimTypes.Name);
-        if (userIdClaim == null)
+        if (userIDClaim == null)
         {
             return new Response(400, "User ID not found in claims");
         }
-        int senderId = int.Parse(userIdClaim.Value);
+        int senderID = int.Parse(userIDClaim.Value);
         Message message = new Message
         {
-            SenderId = senderId,
-            ReceiverId = sendMessage.ReceiverId,
+            SenderID = senderID,
+            ReceiverID = sendMessage.ReceiverID,
             Chat = sendMessage.Content,
             Timestamp = DateTime.UtcNow,
             IsRead = false
@@ -62,12 +62,12 @@ public class MessageService : IMessageService
         
         bool isSent = await _messageRepository.SendMessageAsync(message,userNameClaim.Value);
         if(isSent) return new Response(200,"Message Sent Successfully");
-        return new Response(400,"Invalid Receiver Id");
+        return new Response(400,"Invalid Receiver ID");
     }
 
-    public async Task<Response> MarkMessageAsReadAsync(int messageId)
+    public async Task<Response> MarkMessageAsReadAsync(int messageID)
     {
-        if(await _messageRepository.MarkMessageAsReadAsync(messageId, int.Parse(_httpContext.HttpContext.User.FindFirst("userId").Value)))
+        if(await _messageRepository.MarkMessageAsReadAsync(messageID, int.Parse(_httpContext.HttpContext.User.FindFirst("userID").Value)))
         {
             return new Response(200,"Successfully Changed to Read");
         }
@@ -78,7 +78,7 @@ public class MessageService : IMessageService
     {
         try
         {
-            int count = await _messageRepository.GetUnreadMessagesCountAsync(int.Parse(_httpContext.HttpContext.User.FindFirst("userId").Value));
+            int count = await _messageRepository.GetUnreadMessagesCountAsync(int.Parse(_httpContext.HttpContext.User.FindFirst("userID").Value));
             if(count == 0)
             {
                 return new Response(204,new { Message = "All messages are Read", UnreadMessages = count });
@@ -93,7 +93,7 @@ public class MessageService : IMessageService
 
     public async Task<Response> GetAllUnreadMessagesAsync()
     {
-        List<Message> messages = await _messageRepository.GetAllUnreadMessagesAsync(int.Parse(_httpContext.HttpContext.User.FindFirst("userId").Value));
+        List<Message> messages = await _messageRepository.GetAllUnreadMessagesAsync(int.Parse(_httpContext.HttpContext.User.FindFirst("userID").Value));
         if(messages == null)
         {
             return new Response(404, "No Unread Messages Found");
@@ -103,10 +103,10 @@ public class MessageService : IMessageService
         return new Response(200,responseMessages);
     }
 
-   public async Task<Response> DeleteMessageAsync(int messageId)
+   public async Task<Response> DeleteMessageAsync(int messageID)
     {
-        int userId = int.Parse(_httpContext.HttpContext.User.FindFirst("userId").Value);
-        bool result = await _messageRepository.DeleteMessageAsync(messageId, userId);
+        int userID = int.Parse(_httpContext.HttpContext.User.FindFirst("userID").Value);
+        bool result = await _messageRepository.DeleteMessageAsync(messageID, userID);
         if (result)
         {
             return new Response(200, "Message deleted successfully.");
@@ -117,10 +117,10 @@ public class MessageService : IMessageService
         }
    }
 
-    public async Task<Response> DeleteAllMessagesBetweenUsersAsync(int userId)
+    public async Task<Response> DeleteAllMessagesBetweenUsersAsync(int userID)
     {
-        int currentUserId = int.Parse(_httpContext.HttpContext.User.FindFirst("userId").Value);
-        bool result = await _messageRepository.DeleteAllMessagesBetweenUsersAsync(userId, currentUserId);
+        int currentUserID = int.Parse(_httpContext.HttpContext.User.FindFirst("userID").Value);
+        bool result = await _messageRepository.DeleteAllMessagesBetweenUsersAsync(userID, currentUserID);
 
         if (result)
         {

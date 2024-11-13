@@ -11,12 +11,12 @@ public class Property
 
      
     //ForignKeys
-    public int PropertyTypeId { get; set; }  
-    public int SubPropertyTypeId { get; set; }        
-    public int OwnerId { get; set; }
-    public int LocationId { get; set; }
-    public int ApprovalStatusId { get; set; }
-    public int PropertyStatusId { get; set; } 
+    public int PropertyTypeID { get; set; }  
+    public int SubPropertyTypeID { get; set; }        
+    public int OwnerID { get; set; }
+    public int LocationID { get; set; }
+    public int ApprovalStatusID { get; set; }
+    public int PropertyStatusID { get; set; } 
 
     //Navigation Properties
     public PropertyType PropertyType { get; set; }

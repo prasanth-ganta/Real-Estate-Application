@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.Interfaces;
 
-namespace RealEstateApp.Api.Controllers;
+namespace RealEstateApp.Api.Controllers; 
 
 [Route("api/[controller]")]
 [ApiController]
@@ -23,9 +23,9 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> AddDocument([FromForm] DocumentDTO document, int propertyId)
+    public async Task<IActionResult> AddDocument([FromForm] DocumentDTO document, int propertyID)
     {
-        var result = await _documentService.AddDocument(document, propertyId);
+        var result = await _documentService.AddDocument(document, propertyID);
         return StatusCode(result.StatusCode, result);
     }
 
@@ -36,10 +36,10 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> DeleteDocument(int documentId)
+    public async Task<IActionResult> DeleteDocument(int documentID)
     {
 
-        var result = await _documentService.DeleteDocument(documentId);
+        var result = await _documentService.DeleteDocument(documentID);
         return StatusCode(result.StatusCode, result);
     }
 }

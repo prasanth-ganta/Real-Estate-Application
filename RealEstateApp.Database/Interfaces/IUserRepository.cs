@@ -6,8 +6,8 @@ public interface IUserRepository
 {
     public Task<bool> AddUser(User user);
     public Task<List<User>> GetAllUsers();
-    public Task<Role> GetRole(int roleId);
+    public Task<Role> GetRole(int roleID);
     public Task<User> GetUser(string username);
-    public Task<bool> DeactivateUser(int userId, string username);
-    public Task<bool> ActivateUser(int userId, string username);
+    public Task<bool> DeactivateUser(int userID, string username);
+    public Task<bool> ActivateUser(int userID, string username);
 }

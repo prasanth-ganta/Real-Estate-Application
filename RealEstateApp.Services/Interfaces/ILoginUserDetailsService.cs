@@ -2,6 +2,6 @@ namespace RealEstateApp.Services.Interfaces;
 
 public interface ILoginUserDetailsService
 {
-    public int GetCurrentUserId();
+    public int GetCurrentUserID();
     public string GetCurrentUserName();
 }

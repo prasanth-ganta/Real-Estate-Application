@@ -22,23 +22,23 @@ public class PropertyConfig : IEntityTypeConfiguration<Property>
 
         builder.HasOne(p => p.PropertyType)
             .WithMany(pt => pt.Properties)
-            .HasForeignKey(p => p.PropertyTypeId);
+            .HasForeignKey(p => p.PropertyTypeID);
 
         builder.HasOne(p => p.SubPropertyType)
             .WithMany(spt => spt.Properties)
-            .HasForeignKey(p => p.SubPropertyTypeId);
+            .HasForeignKey(p => p.SubPropertyTypeID);
 
         builder.HasOne(p => p.Owner)
             .WithMany(u => u.OwnedProperties)
-            .HasForeignKey(p => p.OwnerId);
+            .HasForeignKey(p => p.OwnerID);
 
         builder.HasOne(p => p.ApprovalStatus)
             .WithMany(a => a.Properties)
-            .HasForeignKey(p => p.ApprovalStatusId);
+            .HasForeignKey(p => p.ApprovalStatusID);
 
         builder.HasOne(p => p.PropertyStatus)
             .WithMany(ps => ps.Properties)
-            .HasForeignKey(p => p.PropertyStatusId);   
+            .HasForeignKey(p => p.PropertyStatusID);   
         
         builder.HasMany(p => p.FavouritedByUsers)
             .WithMany(u => u.FavouriteProperties)

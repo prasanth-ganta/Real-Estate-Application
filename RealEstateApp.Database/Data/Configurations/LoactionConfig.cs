@@ -19,6 +19,6 @@ public class LocationConfig : IEntityTypeConfiguration<Location>
 
         builder.HasOne(l => l.Property)
             .WithOne(p => p.Location)
-            .HasForeignKey<Property>(p => p.LocationId);
+            .HasForeignKey<Property>(p => p.LocationID);
     }
 }

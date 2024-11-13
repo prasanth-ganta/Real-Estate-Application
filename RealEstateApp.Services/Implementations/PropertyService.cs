@@ -33,16 +33,16 @@ public class PropertyService : IPropertyService
         _logger = logger;
     }
 
-    private int GetCurrentUserId()
+    private int GetCurrentUserID()
     {
         try
         {
-            var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("userId");
-            if (userIdClaim == null || string.IsNullOrEmpty(userIdClaim.Value))
+            var userIDClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("userID");
+            if (userIDClaim == null || string.IsNullOrEmpty(userIDClaim.Value))
             {
                 throw new UnauthorizedAccessException("User is not authenticated");
             }
-            return int.Parse(userIdClaim.Value);
+            return int.Parse(userIDClaim.Value);
         }
         catch (FormatException ex)
         {
@@ -74,12 +74,12 @@ public class PropertyService : IPropertyService
                 Name = property.Name,
                 Description = property.Description,
                 Price = property.Price,
-                PropertyTypeId = (int)property.PropertyType,
-                SubPropertyTypeId = (int)property.PropertySubType,
-                ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
-                PropertyStatusId = (int)property.PropertyStatus,
+                PropertyTypeID = (int)property.PropertyType,
+                SubPropertyTypeID = (int)property.PropertySubType,
+                ApprovalStatusID = (int)ApprovalStatusEnum.Pending,
+                PropertyStatusID = (int)property.PropertyStatus,
                 Location = propertyLocation,
-                OwnerId = GetCurrentUserId(),
+                OwnerID = GetCurrentUserID(),
             };
 
             await _propertyRepository.AddProperty(newProperty);
@@ -108,9 +108,9 @@ public class PropertyService : IPropertyService
         return new Response(200, responseProperty);
     }
 
-    public async Task<Response> GetAllProperties(PropertyListingTypeEnum retivalOption)
+    public async Task<Response> GetAllProperties(PropertyListingTypeEnum propertyListingType)
     {
-        var result = await _propertyRepository.GetAllProperties(retivalOption);
+        var result = await _propertyRepository.GetAllProperties(propertyListingType);
         List<PropertyResponseDTO> responseProperty = new List<PropertyResponseDTO>();
         foreach (var property in result)
         {
@@ -119,9 +119,9 @@ public class PropertyService : IPropertyService
         return new Response(200, responseProperty);
     }
 
-    public async Task<Response> GetOwnedProperties(PropertyListingTypeEnum retivalOption)
+    public async Task<Response> GetOwnedProperties(PropertyListingTypeEnum propertyListingType)
     {
-        var result = await _propertyRepository.GetOwnedProperties(int.Parse(_httpContextAccessor.HttpContext.User.FindFirst("userId").Value), retivalOption);
+        var result = await _propertyRepository.GetOwnedProperties(int.Parse(_httpContextAccessor.HttpContext.User.FindFirst("userID").Value), propertyListingType);
         List<PropertyResponseDTO> responseProperty = new List<PropertyResponseDTO>();
         foreach (var property in result)
         {
@@ -130,10 +130,10 @@ public class PropertyService : IPropertyService
         return new Response(200, responseProperty);
     }
 
-    public async Task<Response> SoftDeleteProperty(int id)
+    public async Task<Response> SoftDeleteProperty(int ID)
     {
         string username = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name).Value;
-        bool isDeleted = await _propertyRepository.SoftDeleteProperty(id, username);
+        bool isDeleted = await _propertyRepository.SoftDeleteProperty(ID, username);
         if (isDeleted == true) return new Response(200, "Deleted successfully");
         return new Response(404, "property was not found or already deleted");
     }
@@ -184,25 +184,25 @@ public class PropertyService : IPropertyService
         }
     }
 
-    public async Task<Response> UpdatePropertyStatus(int id, PropertyListingTypeEnum propertyListingType)
+    public async Task<Response> UpdatePropertyStatus(int ID, PropertyListingTypeEnum propertyListingType)
     {
         try
         {
-            if (id <= 0)
+            if (ID <= 0)
             {
                 throw new ArgumentException("Invalid property ID");
             }
 
-            var currentUserId = GetCurrentUserId();
-            var userProperties = await _propertyRepository.GetOwnedProperties(currentUserId);
-            var existingProperty = userProperties.FirstOrDefault(p => p.ID == id);
+            var currentUserID = GetCurrentUserID();
+            var userProperties = await _propertyRepository.GetOwnedProperties(currentUserID);
+            var existingProperty = userProperties.FirstOrDefault(p => p.ID == ID);
 
             if (existingProperty == null)
             {
-                throw new KeyNotFoundException($"Property with ID {id} not found");
+                throw new KeyNotFoundException($"Property with ID {ID} not found");
             }
 
-            existingProperty.PropertyStatusId = (int)propertyListingType;
+            existingProperty.PropertyStatusID = (int)propertyListingType;
             await _propertyRepository.UpdatePropertyStatus(existingProperty);
             return new Response(200, "Property Updated Successfully");
         }
@@ -218,7 +218,7 @@ public class PropertyService : IPropertyService
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error updating property status for ID {id}: {ex.Message}");
+            _logger.LogError($"Error updating property status for ID {ID}: {ex.Message}");
             throw new InvalidOperationException("Failed to update property status", ex);
         }
     }
@@ -412,18 +412,18 @@ public class PropertyService : IPropertyService
         }
     }
 
-    public async Task<Response> AddToFavorites(int propertyId)
+    public async Task<Response> AddToFavorites(int propertyID)
     {
         try
         {
-            var currentUserId = GetCurrentUserId();
+            var currentUserID = GetCurrentUserID();
 
-            if (propertyId <= 0)
+            if (propertyID <= 0)
             {
                 throw new ArgumentException("Invalid property ID");
             }
 
-            var result = await _propertyRepository.AddToFavorites(currentUserId, propertyId);
+            var result = await _propertyRepository.AddToFavorites(currentUserID, propertyID);
             if (!result)
             {
                 throw new InvalidOperationException(
@@ -445,23 +445,23 @@ public class PropertyService : IPropertyService
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error adding property {propertyId} to favorites: {ex.Message}");
+            _logger.LogError($"Error adding property {propertyID} to favorites: {ex.Message}");
             throw new InvalidOperationException("Failed to add property to favorites", ex);
         }
     }
 
-    public async Task<Response> RemoveFromFavorites(int propertyId)
+    public async Task<Response> RemoveFromFavorites(int propertyID)
     {
         try
         {
-            var currentUserId = GetCurrentUserId();
+            var currentUserID = GetCurrentUserID();
 
-            if (propertyId <= 0)
+            if (propertyID <= 0)
             {
                 throw new ArgumentException("Invalid property ID");
             }
 
-            var result = await _propertyRepository.RemoveFromFavorites(currentUserId, propertyId);
+            var result = await _propertyRepository.RemoveFromFavorites(currentUserID, propertyID);
             if (!result)
             {
                 throw new KeyNotFoundException("Property not found in favorites");
@@ -481,15 +481,15 @@ public class PropertyService : IPropertyService
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error removing property {propertyId} from favorites: {ex.Message}");
+            _logger.LogError($"Error removing property {propertyID} from favorites: {ex.Message}");
             throw new InvalidOperationException("Failed to remove property from favorites", ex);
         }
     }
 
     public async Task<Response> GetFavorites(PropertyListingTypeEnum propertyListingType)
     {
-        int userId=GetCurrentUserId();
-        var result = await _propertyRepository.GetFavorites(userId, propertyListingType);
+        int userID=GetCurrentUserID();
+        var result = await _propertyRepository.GetFavorites(userID, propertyListingType);
         List<PropertyResponseDTO> responseProperty = new List<PropertyResponseDTO>();
         foreach (var property in result)
         {

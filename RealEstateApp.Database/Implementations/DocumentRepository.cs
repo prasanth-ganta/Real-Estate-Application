@@ -19,13 +19,13 @@ public class DocumentRepository : IDocumentRepository
         return true;
     }
 
-    public async Task<string> DeleteDocument(int documentId , int userId)
+    public async Task<string> DeleteDocument(int documentID , int userID)
     {
         var document = await _realEstateDbContext.Documents
             .Include(d => d.Property)
-            .FirstOrDefaultAsync(d => d.ID == documentId);
+            .FirstOrDefaultAsync(d => d.ID == documentID);
 
-        if (document == null || document.Property.OwnerId != userId)
+        if (document == null || document.Property.OwnerID != userID)
         {
             throw new KeyNotFoundException("Document not found ");
         }

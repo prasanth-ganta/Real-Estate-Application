@@ -16,6 +16,6 @@ public class DocumentConfig : IEntityTypeConfiguration<Document>
             
         builder.HasOne(d => d.Property)
             .WithMany(p => p.Documents)
-            .HasForeignKey(d => d.PropertyId);
+            .HasForeignKey(d => d.PropertyID);
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.Interfaces;
 
-namespace RealEstateApp.Api.Controllers;
+namespace RealEstateApp.Api.Controllers; 
 
 [Route("api/[controller]")]
 [ApiController]
@@ -52,15 +52,15 @@ public class UserController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpDelete("/api/Admin/DeActivateUser")]
-    public async Task<IActionResult> DeactivateUser(int userId){
-        var result = await _userService.DeactivateUser(userId);
+    public async Task<IActionResult> DeactivateUser(int userID){
+        var result = await _userService.DeactivateUser(userID);
         return StatusCode(result.StatusCode, result.Value);
     }   
 
     [Authorize(Roles = "Admin")]
     [HttpPost("/api/Admin/ActivateUser")]
-    public async Task<IActionResult> ActivateUser(int userId){
-        var result = await _userService.ActivateUser(userId);
+    public async Task<IActionResult> ActivateUser(int userID){
+        var result = await _userService.ActivateUser(userID);
         return StatusCode(result.StatusCode, result.Value);
     }  
 }

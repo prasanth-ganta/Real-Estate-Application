@@ -9,17 +9,17 @@ namespace RealEstateApp.Services.Interfaces;
 public interface IPropertyService
 {
     public Task<Response> CreateProperty(PropertyDTO property);
-    public Task<Response> GetAllProperties(PropertyListingTypeEnum retivalOption);
-    public Task<Response> GetOwnedProperties(PropertyListingTypeEnum retivalOption);
+    public Task<Response> GetAllProperties(PropertyListingTypeEnum propertyListingType);
+    public Task<Response> GetOwnedProperties(PropertyListingTypeEnum propertyListingType);
     public Task<Response> GetAllPendingProperties();
-    public Task<Response> SoftDeleteProperty(int id);
-    Task<Response> UpdatePropertyStatus(int id, PropertyListingTypeEnum propertyListingType);
+    public Task<Response> SoftDeleteProperty(int ID);
+    Task<Response> UpdatePropertyStatus(int ID, PropertyListingTypeEnum propertyListingType);
 
     // Buy Methods
     Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByLocation(string city, string state);
     Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByPincode(int zipCode);
     Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByPriceRange(double minPrice, double maxPrice);
-    //Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByType(int propertyTypeId);
+    //Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByType(int propertyTypeID);
 
     // Rent Methods
     Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByLocation(string city, string state);
@@ -28,8 +28,8 @@ public interface IPropertyService
     Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByName(string propertyName);
 
     //Favourites
-    Task<Response> AddToFavorites(int propertyId);
-    Task<Response> RemoveFromFavorites(int propertyId);
+    Task<Response> AddToFavorites(int propertyID);
+    Task<Response> RemoveFromFavorites(int propertyID);
     //Task GetFavorites(PropertyListingTypeEnum propertyListingType);
     Task<Response>GetFavorites(PropertyListingTypeEnum propertyListingType);
 }

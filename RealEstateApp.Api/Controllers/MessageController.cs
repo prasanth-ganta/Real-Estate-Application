@@ -27,16 +27,16 @@ public class MessageController : ControllerBase
     }
 
     [HttpGet("between")]
-    public async Task<IActionResult> GetMessagesBetweenUsers(int receiverId)
+    public async Task<IActionResult> GetMessagesBetweenUsers(int receiverID)
     {
-        var result = await _messageService.GetMessagesBetweenUsersAsync(receiverId);
+        var result = await _messageService.GetMessagesBetweenUsersAsync(receiverID);
         return StatusCode(result.StatusCode,result.Value);
     }
 
-    [HttpPost("{messageId}/read")]
-    public async Task<IActionResult> MarkMessageAsRead(int messageId)
+    [HttpPost("{messageID}/read")]
+    public async Task<IActionResult> MarkMessageAsRead(int messageID)
     {
-        var result = await _messageService.MarkMessageAsReadAsync(messageId);
+        var result = await _messageService.MarkMessageAsReadAsync(messageID);
         return StatusCode(result.StatusCode,result.Value);
     }
 
@@ -54,17 +54,17 @@ public class MessageController : ControllerBase
         return StatusCode(result.StatusCode,result.Value);
     }
 
-    [HttpDelete("{messageId}")]
-    public async Task<IActionResult> DeleteMessage(int messageId)
+    [HttpDelete("{messageID}")]
+    public async Task<IActionResult> DeleteMessage(int messageID)
     {
-        var result = await _messageService.DeleteMessageAsync(messageId);
+        var result = await _messageService.DeleteMessageAsync(messageID);
         return StatusCode(result.StatusCode,result.Value);
     }
 
     [HttpDelete("between")]
-    public async Task<IActionResult> DeleteAllMessagesBetweenUsers(int userId)
+    public async Task<IActionResult> DeleteAllMessagesBetweenUsers(int userID)
     {
-        var result = await _messageService.DeleteAllMessagesBetweenUsersAsync(userId);
+        var result = await _messageService.DeleteAllMessagesBetweenUsersAsync(userID);
         return StatusCode(result.StatusCode,result.Value);
 
     }

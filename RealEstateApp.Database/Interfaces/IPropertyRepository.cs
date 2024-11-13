@@ -7,12 +7,12 @@ public interface IPropertyRepository
 {
     public Task AddProperty(Property newProperty, string username);
     public Task<List<Property>> GetAllProperties(PropertyListingTypeEnum propertyStatus);
-    public Task<List<Property>> GetOwnedProperties(int ownerId, PropertyListingTypeEnum retivalOption);
-    public Task<List<Property>> GetFavorites(int ownerId, PropertyListingTypeEnum retivalOption);
+    public Task<List<Property>> GetOwnedProperties(int ownerID, PropertyListingTypeEnum propertyListingType);
+    public Task<List<Property>> GetFavorites(int ownerID, PropertyListingTypeEnum propertyListingType);
     public Task<List<Property>> GetAllPendingProperties();
-    public Task<bool> SoftDeleteProperty(int id, string value);
+    public Task<bool> SoftDeleteProperty(int ID, string value);
     Task AddProperty(Property newProperty);
-    Task<List<Property>> GetOwnedProperties(int ownerId);
+    Task<List<Property>> GetOwnedProperties(int ownerID);
     Task UpdatePropertyStatus(Property updatedProperty);
      // Buy Methods
     Task<IEnumerable<Property>> GetPropertiesForBuyByLocation(string city, string state);
@@ -26,9 +26,9 @@ public interface IPropertyRepository
     Task<IEnumerable<Property>> GetPropertiesForRentByName(string propertyName);
 
     //documents
-    Task<bool> DeleteDocument(int documentId,int propertyId);
+    Task<bool> DeleteDocument(int documentID,int propertyID);
     
     //Favourites 
-    Task<bool> AddToFavorites(int userId, int propertyId);
-    Task<bool> RemoveFromFavorites(int userId, int propertyId);
+    Task<bool> AddToFavorites(int userID, int propertyID);
+    Task<bool> RemoveFromFavorites(int userID, int propertyID);
 }

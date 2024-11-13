@@ -21,9 +21,9 @@ public class UserRepository : IUserRepository
         return true;
     }
 
-    public async Task<Role> GetRole(int roleId)
+    public async Task<Role> GetRole(int roleID)
     {
-        return await _context.Roles.FindAsync(roleId);
+        return await _context.Roles.FindAsync(roleID);
     }
 
     public async Task<User> GetUser (string userName)
@@ -36,9 +36,9 @@ public class UserRepository : IUserRepository
         return await _context.Users.Include(u => u.OwnedProperties).ToListAsync();
     }
 
-    public async Task<bool> DeactivateUser(int userId, string username)
+    public async Task<bool> DeactivateUser(int userID, string username)
     {
-        User user = await _context.Users.Include(u => u.Roles).FirstAsync(u => u.ID == userId);
+        User user = await _context.Users.Include(u => u.Roles).FirstAsync(u => u.ID == userID);
         var roles = user.Roles;
         foreach (var role in roles)
         {
@@ -56,9 +56,9 @@ public class UserRepository : IUserRepository
         return true;
     }
 
-    public async Task<bool> ActivateUser(int userId, string username)
+    public async Task<bool> ActivateUser(int userID, string username)
     {
-        User user = await _context.Users.FirstAsync(u => u.ID == userId);
+        User user = await _context.Users.FirstAsync(u => u.ID == userID);
     
         if(user == null)
         {

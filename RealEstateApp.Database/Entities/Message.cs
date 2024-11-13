@@ -9,8 +9,8 @@ public class Message
     public DateTime Timestamp { get; set; }
     
     //ForignKeys
-    public int SenderId { get; set; }
-    public int ReceiverId { get; set; }
+    public int SenderID { get; set; }
+    public int ReceiverID { get; set; }
 
     //Navigation Properties
     public User Sender { get; set; }

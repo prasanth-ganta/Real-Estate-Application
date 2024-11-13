@@ -9,7 +9,7 @@ public class Document
     public string Description {get;set;}
 
     //ForignKey
-    public int PropertyId {get;set;}
+    public int PropertyID {get;set;}
 
     //Navigation Property
     public Property Property { get; set; }

@@ -23,7 +23,7 @@ public class DocumentService : IDocumentService
         _logger = logger;
         _configuration = configuration;
     }
-    public async Task<Response> AddDocument(DocumentDTO document, int propertyId)
+    public async Task<Response> AddDocument(DocumentDTO document, int propertyID)
     {
         try
         {
@@ -32,7 +32,7 @@ public class DocumentService : IDocumentService
                 throw new ArgumentNullException(nameof(document));
             }
 
-            var currentUserId = _loginUserDetailsService.GetCurrentUserId();
+            var currentUserID = _loginUserDetailsService.GetCurrentUserID();
 
             List<string> validExtensions = new List<string>() { ".jpg", ".png", "pdf" };
 
@@ -57,7 +57,7 @@ public class DocumentService : IDocumentService
             {
                 FileName = fileName,
                 Description = document.Description,
-                PropertyId = propertyId
+                PropertyID = propertyID
             };
 
             await _documentRepository.AddDocument(configuredDocument);
@@ -70,16 +70,16 @@ public class DocumentService : IDocumentService
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error adding document to property {propertyId}: {ex.Message}");
+            _logger.LogError($"Error adding document to property {propertyID}: {ex.Message}");
             throw new InvalidOperationException("Failed to add document to property", ex);
         }
     }
 
-    public async Task<Response> DeleteDocument(int documentId)
+    public async Task<Response> DeleteDocument(int documentID)
     {
-        var currentUserId = _loginUserDetailsService.GetCurrentUserId();
+        var currentUserID = _loginUserDetailsService.GetCurrentUserID();
 
-        var fileName = await _documentRepository.DeleteDocument(documentId,currentUserId);
+        var fileName = await _documentRepository.DeleteDocument(documentID,currentUserID);
         string path = Path.Combine(_configuration["UploadedFiles:Path"], "UploadedDocuments", fileName);
         
         if (File.Exists(path))
@@ -88,7 +88,7 @@ public class DocumentService : IDocumentService
         }
         else
         {
-            _logger.LogWarning($"Physical file not found for document {documentId}: {path}");
+            _logger.LogWarning($"Physical file not found for document {documentID}: {path}");
         }
 
         return new Response(200, "Document deleted successfully");

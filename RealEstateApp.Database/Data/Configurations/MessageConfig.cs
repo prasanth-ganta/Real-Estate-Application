@@ -13,12 +13,12 @@ public class MessageConfig : IEntityTypeConfiguration<Message>
 
         builder.HasOne(m => m.Sender)
             .WithMany(u => u.SentMessages)
-            .HasForeignKey(m => m.SenderId)
+            .HasForeignKey(m => m.SenderID)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(m => m.Receiver)
             .WithMany(u => u.ReceivedMessages)
-            .HasForeignKey(m => m.ReceiverId)
+            .HasForeignKey(m => m.ReceiverID)
             .OnDelete(DeleteBehavior.Restrict);    
     }
 }

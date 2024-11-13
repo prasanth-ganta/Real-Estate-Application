@@ -13,7 +13,7 @@ public class LoginUserDetailsService : ILoginUserDetailsService
     {
         _httpContextAccessor = httpContextAccessor;
     }
-    public int GetCurrentUserId()
+    public int GetCurrentUserID()
     {
         try
         {

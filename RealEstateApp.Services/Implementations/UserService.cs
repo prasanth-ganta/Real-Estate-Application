@@ -76,18 +76,18 @@ public class UserService : IUserService
         return new Response(201, new { user = user.Email, Message = " Successfully Registered" });
     }
 
-    public async Task<Response> DeactivateUser(int userId)
+    public async Task<Response> DeactivateUser(int userID)
     {
-        if( await _userRepository.DeactivateUser(userId,_loginDetails.GetCurrentUserName()))
+        if( await _userRepository.DeactivateUser(userID,_loginDetails.GetCurrentUserName()))
         {
             return new Response(200,"Successfully Deactivated");
         }
         return new Response(400,"User doesn't exit or Already Deactivated");
     }
 
-    public async Task<Response> ActivateUser(int userId)
+    public async Task<Response> ActivateUser(int userID)
     {
-        if( await _userRepository.ActivateUser(userId,_loginDetails.GetCurrentUserName()))
+        if( await _userRepository.ActivateUser(userID,_loginDetails.GetCurrentUserName()))
         {
             return new Response(200,"Successfully Activated");
         }
@@ -105,7 +105,7 @@ public class UserService : IUserService
         {
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Name, user.UserName),
-            new Claim("userId", user.ID.ToString()),
+            new Claim("userID", user.ID.ToString()),
         };
         foreach (Role role in user.Roles)
         {

@@ -23,32 +23,32 @@ public class PropertyRepository : IPropertyRepository
     public async Task<List<Property>> GetAllPendingProperties()
     {
         IQueryable<Property> query = LoadAllProperties()
-            .Where(p => p.ApprovalStatusId == (int)ApprovalStatusEnum.Pending);
+            .Where(p => p.ApprovalStatusID == (int)ApprovalStatusEnum.Pending);
 
         return await query.ToListAsync();
     }
 
-    public async Task<List<Property>> GetAllProperties(PropertyListingTypeEnum retivalOption)
+    public async Task<List<Property>> GetAllProperties(PropertyListingTypeEnum propertyListingType)
     {
         IQueryable<Property> query = LoadAllProperties()
-            .Where(p => p.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+            .Where(p => p.ApprovalStatusID == (int)ApprovalStatusEnum.Approved);
 
-        if (retivalOption != PropertyListingTypeEnum.All)
+        if (propertyListingType != PropertyListingTypeEnum.All)
         {
-            query = query.Where(p => p.PropertyStatusId == (int)retivalOption);
+            query = query.Where(p => p.PropertyStatusID == (int)propertyListingType);
         }
 
         return await query.ToListAsync();
     }
 
-    public async Task<List<Property>> GetOwnedProperties(int ownerId, PropertyListingTypeEnum retivalOption)
+    public async Task<List<Property>> GetOwnedProperties(int ownerID, PropertyListingTypeEnum propertyListingType)
     {
         IQueryable<Property> query = LoadAllProperties()
-            .Where(p => p.OwnerId == ownerId);
+            .Where(p => p.OwnerID == ownerID);
 
-        if (retivalOption != PropertyListingTypeEnum.All)
+        if (propertyListingType != PropertyListingTypeEnum.All)
         {
-            query = query.Where(p => p.PropertyStatusId == (int)retivalOption);
+            query = query.Where(p => p.PropertyStatusID == (int)propertyListingType);
         }
 
         return await query.ToListAsync();
@@ -83,9 +83,9 @@ public class PropertyRepository : IPropertyRepository
         await _realEstateDbContext.Properties.AddAsync(newProperty);
         await _realEstateDbContext.SaveChangesAsync();
     }
-    public async Task<List<Property>> GetOwnedProperties(int ownerId)
+    public async Task<List<Property>> GetOwnedProperties(int ownerID)
     {
-        return await _realEstateDbContext.Properties.Include(p => p.Owner).Include(p => p.Location).Where(p => p.OwnerId == ownerId).ToListAsync();
+        return await _realEstateDbContext.Properties.Include(p => p.Owner).Include(p => p.Location).Where(p => p.OwnerID == ownerID).ToListAsync();
 
     }
 
@@ -192,10 +192,10 @@ public class PropertyRepository : IPropertyRepository
             .ToListAsync();
     }
 
-    public async Task<bool> DeleteDocument(int documentId, int propertyId)
+    public async Task<bool> DeleteDocument(int documentID, int propertyID)
     {
         var document = await _realEstateDbContext.Documents
-            .FirstOrDefaultAsync(d => d.ID == documentId && d.PropertyId == propertyId);
+            .FirstOrDefaultAsync(d => d.ID == documentID && d.PropertyID == propertyID);
 
         if (document == null)
         {
@@ -207,21 +207,21 @@ public class PropertyRepository : IPropertyRepository
     }
 
     //Favourite 
-    public async Task<bool> AddToFavorites(int userId, int propertyId)
+    public async Task<bool> AddToFavorites(int userID, int propertyID)
     {
         var user = await _realEstateDbContext.Users
             .Include(u => u.FavouriteProperties)
-            .FirstOrDefaultAsync(u => u.ID == userId);
+            .FirstOrDefaultAsync(u => u.ID == userID);
 
         var property = await _realEstateDbContext.Properties
-            .FirstOrDefaultAsync(p => p.ID == propertyId);
+            .FirstOrDefaultAsync(p => p.ID == propertyID);
 
         if (user == null || property == null)
         {
             return false;
         }
 
-        if (user.FavouriteProperties.Any(p => p.ID == propertyId))
+        if (user.FavouriteProperties.Any(p => p.ID == propertyID))
         {
             return false;
         }
@@ -233,11 +233,11 @@ public class PropertyRepository : IPropertyRepository
     }
 
 
-    public async Task<bool> RemoveFromFavorites(int userId, int propertyId)
+    public async Task<bool> RemoveFromFavorites(int userID, int propertyID)
     {
         var user = await _realEstateDbContext.Users
             .Include(u => u.FavouriteProperties)
-            .FirstOrDefaultAsync(u => u.ID == userId);
+            .FirstOrDefaultAsync(u => u.ID == userID);
 
         if (user == null)
         {
@@ -245,7 +245,7 @@ public class PropertyRepository : IPropertyRepository
         }
 
         var property = user.FavouriteProperties
-            .FirstOrDefault(p => p.ID == propertyId);
+            .FirstOrDefault(p => p.ID == propertyID);
 
         if (property == null)
         {
@@ -257,13 +257,13 @@ public class PropertyRepository : IPropertyRepository
         return true;
     }
 
-    public async Task<List<Property>> GetFavorites(int ownerId, PropertyListingTypeEnum propertyListingType)
+    public async Task<List<Property>> GetFavorites(int ownerID, PropertyListingTypeEnum propertyListingType)
     {
-        IQueryable<Property> query = LoadAllProperties().Where(p => p.FavouritedByUsers.Any(u => u.ID == ownerId));
+        IQueryable<Property> query = LoadAllProperties().Where(p => p.FavouritedByUsers.Any(u => u.ID == ownerID));
 
         if (propertyListingType != PropertyListingTypeEnum.All)
         {
-            query = query.Where(p => p.PropertyStatusId == (int)propertyListingType);
+            query = query.Where(p => p.PropertyStatusID == (int)propertyListingType);
         }
 
         return await query.ToListAsync();
