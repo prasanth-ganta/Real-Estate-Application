@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using RealEstateApp.Services.Interfaces;
@@ -28,5 +29,15 @@ public class LoginUserDetailsService : ILoginUserDetailsService
             _logger.LogError($"Invalid user ID format in token: {ex.Message}");
             throw new UnauthorizedAccessException("Invalid user authentication token");
         }
+    }
+
+    public string GetCurrentUserName()
+    {
+        var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name);
+        if (userIdClaim == null || string.IsNullOrEmpty(userIdClaim.Value))
+        {
+            throw new UnauthorizedAccessException("User is not authenticated");
+        }
+        return userIdClaim.Value;
     }
 }
