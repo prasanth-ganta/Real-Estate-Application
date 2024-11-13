@@ -1,209 +1,12 @@
-// using AutoMapper;
-// using Microsoft.AspNetCore.Http;
-// using RealEstateApp.Database.Entities;
-// using RealEstateApp.Database.Interfaces;
-// using RealEstateApp.Services.DTOs.RequestDTOs;
-// using RealEstateApp.Services.DTOs.ResponseDTOs;
-// using RealEstateApp.Services.Interfaces;
-// using RealEstateApp.Services.ResponseType;
-// using RealEstateApp.Utility.Enumerations;
-
-// namespace RealEstateApp.Services.Implementations;
-
-// public class PropertyService : IPropertyService
-// {
-//     private readonly IPropertyRepository _propertyRepository;
-//     private readonly IMapper _mapper;
-//     private readonly IHttpContextAccessor _httpContextAccessor;
-
-//     public PropertyService(IPropertyRepository propertyRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
-//     {
-//         _propertyRepository = propertyRepository;
-//         _mapper = mapper;
-//         _httpContextAccessor = httpContextAccessor;
-//     }
-
-//     public async Task<Response> CreateProperty(PropertyDTO property)
-//     {
-//         var propertyLocation = new Location
-//         {
-//             ZipCode = property.Location.ZipCode,
-//             City = property.Location.City,
-//             State = property.Location.State,
-//             Country = property.Location.Country,
-//             GeoLocation = property.Location.GeoLocation
-//         };
-
-//         var newProperty = new Property
-//         {
-//             Name = property.Name,
-//             Description = property.Description,
-//             Price = property.Price,
-//             PropertyTypeId = (int)property.PropertyType,
-//             SubPropertyTypeId = (int)property.PropertySubType,
-//             ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
-//             PropertyStatusId = (int)property.PropertyStatus,
-//             Location = propertyLocation,
-
-//             OwnerId = int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId").Value)
-//         };
-//         await _propertyRepository.AddProperty(newProperty);
-//         return new Response(200, "Property Created Successfully");
-//     }
-
-//     public async Task<Response> GetOwnedProperties()
-//     {
-//         var result = await _propertyRepository.GetOwnedProperties(int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId").Value));
-//         return new Response(200, result);
-//     }
-
-//     public async Task<Response> UpdatePropertyStatus(int id, PropertyListingTypeEnum propertyListingType)
-//     {
-//         var currentUserId = int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId").Value);
-//         IEnumerable<Property> userProperties = await _propertyRepository.GetOwnedProperties(currentUserId);
-//         Property existingProperty = userProperties.FirstOrDefault(p => p.ID == id);
-//         if (existingProperty==null)
-//         {
-//             return new Response(404, "Property not found");
-//         }
-
-//         existingProperty.StatusId=(int)propertyListingType;
-//         await _propertyRepository.UpdatePropertyStatus(existingProperty);
-//         return new Response(200, "Property Updated Successfully");
-//     }
-
-
-
-
-//     // Buy Methods Implementation
-//     public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForBuyByLocation(string city, string state)
-//     {
-//         IEnumerable<Property> properties = (IEnumerable<Property>)await _propertyRepository.GetPropertiesForBuyByLocation(city, state);
-//         return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
-//     }
-
-//     public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForBuyByPincode(int zipCode)
-//     {
-//         IEnumerable<Property> properties = (IEnumerable<Property>)await _propertyRepository.GetPropertiesForBuyByPincode(zipCode);
-//         return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
-//     }
-
-//     public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForBuyByPriceRange(double minPrice, double maxPrice)
-//     {
-//         IEnumerable<Property> properties = (IEnumerable<Property>)await _propertyRepository.GetPropertiesForBuyByPriceRange(minPrice, maxPrice);
-//         return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
-//     }
-
-
-//     // Rent Methods Implementation
-//     public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByLocation(string city, string state)
-//     {
-//         IEnumerable<Property> properties = (IEnumerable<Property>)await _propertyRepository.GetPropertiesForRentByLocation(city, state);
-//         return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
-//     }
-
-//     public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByPincode(int zipCode)
-//     {
-//         IEnumerable<Property> properties = (IEnumerable<Property>)await _propertyRepository.GetPropertiesForRentByPincode(zipCode);
-//         return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
-//     }
-
-//     public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByPriceRange(double minPrice, double maxPrice)
-//     {
-//         IEnumerable<Property> properties = (IEnumerable<Property>)await _propertyRepository.GetPropertiesForRentByPriceRange(minPrice, maxPrice);
-//         return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
-//     }
-
-//     public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByName(string propertyName)
-//     {
-//         IEnumerable<Property> properties = (IEnumerable<Property>)await _propertyRepository.GetPropertiesForRentByName(propertyName);
-//         return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
-//     }
-
-
-//     //Documents
-//     public async Task<Response> AddDocument(DocumentDTO documentDTO,int propertyId)
-//     {
-//         var currentUserId = int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId").Value);
-//         IEnumerable<Property> userProperties = await _propertyRepository.GetOwnedProperties(currentUserId);
-
-//         if (!userProperties.Any(p => p.ID == propertyId))
-//         {
-//             new Response(403, "You don't have permission to add documents to this property");
-//         }
-
-//         var document = new Document
-//         {
-//             Url = documentDTO.Url,
-//             Description = documentDTO.Description,
-//             PropertyId = propertyId,
-//         };
-
-//         var result = await _propertyRepository.AddDocument(document,propertyId);
-//         return new Response(201,"Document added successfully");
-//     }
-
-
-//     public async Task<Response> DeleteDocument(int documentId, int propertyId)
-//     {
-//         var currentUserId = int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId").Value);
-//         IEnumerable<Property> userProperties = await _propertyRepository.GetOwnedProperties(currentUserId);
-
-//         if (!userProperties.Any(p => p.ID == propertyId))
-//         {
-//            return new Response(403, "You don't have permission to delete documents to this property");
-//         }
-
-//         var deleted = await _propertyRepository.DeleteDocument(documentId, propertyId);
-//         if (!deleted)
-//         {
-//             return new Response(404, "Document not found");
-//         }
-
-//         return new Response(200, "Document deleted successfully");
-//     }
-
-//     //Favourites
-//     public async Task<Response> AddToFavorites(int propertyId)
-//     {
-//         var currentUserId = int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId").Value);
-//         IEnumerable<Property> userProperties = await _propertyRepository.GetOwnedProperties(currentUserId);
-
-//         if (userProperties.Any(p => p.ID == propertyId))
-//         {
-//            return new Response(400, "Property is already in favorites or failed to add");
-//         }
-
-//         var result = await _propertyRepository.AddToFavorites(currentUserId, propertyId);
-//         if (!result)
-//         {
-//             return new Response(400, "Property is already in favorites or failed to add");
-//         }
-
-//         return new Response(201, "Property added to favorites successfully");
-//     }
-
-//     public async Task<Response> RemoveFromFavorites(int propertyId)
-//     {
-//         var currentUserId = int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId").Value);
-
-//         var result = await _propertyRepository.RemoveFromFavorites(currentUserId, propertyId);
-//         if (!result)
-//         {
-//             return new Response(404, "Property not found in favorites");
-//         }
-
-//         return new Response(200, "Property removed from favorites successfully");
-//     }
-
-// }
-
+using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using RealEstateApp.Database.Entities;
 using RealEstateApp.Database.Interfaces;
+using RealEstateApp.Services.DTOs;
 using RealEstateApp.Services.DTOs.RequestDTOs;
+using RealEstateApp.Services.DTOs.ResponseDTOs;
 using RealEstateApp.Services.DTOs.ResponseDTOs;
 using RealEstateApp.Services.Interfaces;
 using RealEstateApp.Services.ResponseType;
@@ -251,6 +54,30 @@ public class PropertyService : IPropertyService
 
     public async Task<Response> CreateProperty(PropertyDTO property)
     {
+        var propertyLocation = new Location
+        {
+            ZipCode = property.Location.ZipCode,
+            City = property.Location.City,
+            State = property.Location.State,
+            Country = property.Location.Country,
+            GeoLocation = property.Location.GeoLocation
+        };
+    
+        var newProperty = new Property 
+        { 
+            Name = property.Name,
+            Description = property.Description,
+            Price = property.Price, 
+            PropertyTypeId = (int)property.PropertyType, 
+            SubPropertyTypeId = (int)property.PropertySubType, 
+            ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
+            PropertyStatusId = (int)property.PropertyStatus, 
+            Location = propertyLocation,
+            
+            OwnerId = int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId").Value)
+        };
+        await _propertyRepository.AddProperty(newProperty, _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name).Value);
+    return new Response(200,"Property Created Successfully");
         try
         {
             if (property == null)
@@ -295,8 +122,71 @@ public class PropertyService : IPropertyService
         }
     }
 
-    public async Task<Response> GetOwnedProperties()
+    public async Task<Response> GetAllPendingProperties()
     {
+        var result = await _propertyRepository.GetAllPendingProperties();
+        List<PropertyResponseDTO> responseProperty = new List<PropertyResponseDTO>();
+        foreach (var property in result)
+        {
+            responseProperty.Add(MappingProperty(property));
+        }
+        return new Response(200,responseProperty);
+    }
+
+    public async Task<Response> GetAllProperties(RetrivalOptionsEnum retivalOption)
+    {
+        var result = await _propertyRepository.GetAllProperties(retivalOption);
+        List<PropertyResponseDTO> responseProperty = new List<PropertyResponseDTO>();
+        foreach (var property in result)
+        {
+            responseProperty.Add(MappingProperty(property));
+        }
+        return new Response(200,responseProperty);    
+    }
+    
+    public async Task<Response> GetOwnedProperties(RetrivalOptionsEnum retivalOption)
+    {
+        var result = await _propertyRepository.GetOwnedProperties(int.Parse(_httpContextAccessor.HttpContext.User.FindFirst("userId").Value), retivalOption);
+        List<PropertyResponseDTO> responseProperty = new List<PropertyResponseDTO>();
+        foreach (var property in result)
+        {
+            responseProperty.Add(MappingProperty(property));
+        }
+        return new Response(200,responseProperty); 
+    }
+
+    public async Task<Response> SoftDeleteProperty(int id)
+    {
+        string username = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name).Value;
+        bool isDeleted = await _propertyRepository.SoftDeleteProperty(id, username);
+        if( isDeleted == true ) return new Response(200,"Deleted successfully"); 
+        return new Response(404,"property was not found or already deleted");
+    }
+
+    private PropertyResponseDTO MappingProperty(Property property){
+
+        var propertyLocation = new LocationDTO
+        {
+            ZipCode = property.Location.ZipCode,
+            City = property.Location.City,
+            State = property.Location.State,
+            Country = property.Location.Country,
+            GeoLocation = property.Location.GeoLocation
+        };
+    
+        var responseProperty = new PropertyResponseDTO 
+        { 
+            Name = property.Name,
+            Description = property.Description,
+            Price = property.Price, 
+            PropertyType = property.PropertyType.Name, 
+            PropertySubType = property.SubPropertyType.Name, 
+            PropertyStatus = property.PropertyStatus.Status, 
+            ApprovalStatus = property.ApprovalStatus.Status, 
+            Location = propertyLocation,
+            OwnerName = property.Owner.FullName
+        };
+        return responseProperty;
         try
         {
             var userId = GetCurrentUserId();

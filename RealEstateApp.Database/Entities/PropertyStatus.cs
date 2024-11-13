@@ -8,6 +8,8 @@ public class PropertyStatus
     
     [Required]
     public string Status { get; set; }
+    public bool IsActive { get; set; } = true;
 
+    //Navigation Properties
     public ICollection<Property> Properties { get; set; }
 }

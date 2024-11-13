@@ -7,6 +7,8 @@ public class Property
     public string Name { get; set; }
     public string Description { get; set; }
     public double Price { get; set; }
+    public bool IsActive { get; set; } = true;
+
      
     //ForignKeys
     public int PropertyTypeId { get; set; }  
@@ -15,8 +17,7 @@ public class Property
     public int LocationId { get; set; }
     public int ApprovalStatusId { get; set; }
     public int StatusId { get; set; }
-    public int PropertyStatusId { get; set; }  
-
+    public int PropertyStatusId { get; set; } 
 
     //Navigation Properties
     public PropertyType PropertyType { get; set; }
