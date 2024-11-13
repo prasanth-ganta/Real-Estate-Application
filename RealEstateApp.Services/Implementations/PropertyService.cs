@@ -485,4 +485,16 @@ public class PropertyService : IPropertyService
             throw new InvalidOperationException("Failed to remove property from favorites", ex);
         }
     }
+
+    public async Task<Response> GetFavorites(PropertyListingTypeEnum propertyListingType)
+    {
+        int userId=GetCurrentUserId();
+        var result = await _propertyRepository.GetFavorites(userId, propertyListingType);
+        List<PropertyResponseDTO> responseProperty = new List<PropertyResponseDTO>();
+        foreach (var property in result)
+        {
+            responseProperty.Add(MappingProperty(property));
+        }
+        return new Response(200, responseProperty);
+    }
 }

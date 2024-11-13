@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using RealEstateApp.Database.Data;
 using RealEstateApp.Database.Entities;
 using RealEstateApp.Database.Interfaces;
@@ -18,8 +19,23 @@ public class DocumentRepository : IDocumentRepository
         return true;
     }
 
-    public Task<bool> DeleteDocument(int documentId, int propertyId)
+    public async Task<string> DeleteDocument(int documentId , int userId)
     {
-        throw new NotImplementedException();
+        var document = await _realEstateDbContext.Documents
+            .Include(d => d.Property)
+            .FirstOrDefaultAsync(d => d.ID == documentId);
+
+        if (document == null || document.Property.OwnerId != userId)
+        {
+            throw new KeyNotFoundException("Document not found ");
+        }
+        string fileName = document.FileName;
+        _realEstateDbContext.Documents.Remove(document);
+        await _realEstateDbContext.SaveChangesAsync();
+
+        return fileName; 
+
     }
+
+
 }

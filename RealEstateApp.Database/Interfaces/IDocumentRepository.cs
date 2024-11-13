@@ -4,5 +4,5 @@ namespace RealEstateApp.Database.Interfaces;
 public interface IDocumentRepository
 {
     Task<bool> AddDocument(Document document);
-    Task<bool> DeleteDocument(int documentId,int propertyId);
+    Task<string> DeleteDocument(int documentId , int userId);
 }

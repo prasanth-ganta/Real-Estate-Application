@@ -257,5 +257,16 @@ public class PropertyRepository : IPropertyRepository
         return true;
     }
 
+    public async Task<List<Property>> GetFavorites(int ownerId, PropertyListingTypeEnum propertyListingType)
+    {
+        IQueryable<Property> query = LoadAllProperties().Where(p => p.FavouritedByUsers.Any(u => u.ID == ownerId));
 
+        if (propertyListingType != PropertyListingTypeEnum.All)
+        {
+            query = query.Where(p => p.PropertyStatusId == (int)propertyListingType);
+        }
+
+        return await query.ToListAsync();
+
+    }
 }

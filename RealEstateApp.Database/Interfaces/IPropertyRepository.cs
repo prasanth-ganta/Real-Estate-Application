@@ -8,6 +8,7 @@ public interface IPropertyRepository
     public Task AddProperty(Property newProperty, string username);
     public Task<List<Property>> GetAllProperties(PropertyListingTypeEnum propertyStatus);
     public Task<List<Property>> GetOwnedProperties(int ownerId, PropertyListingTypeEnum retivalOption);
+    public Task<List<Property>> GetFavorites(int ownerId, PropertyListingTypeEnum retivalOption);
     public Task<List<Property>> GetAllPendingProperties();
     public Task<bool> SoftDeleteProperty(int id, string value);
     Task AddProperty(Property newProperty);

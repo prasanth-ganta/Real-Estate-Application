@@ -18,7 +18,7 @@ public class DocumentService : IDocumentService
     private readonly IConfiguration _configuration;
     public DocumentService(IDocumentRepository documentRepository, ILoginUserDetailsService loginUserDetailsService, ILogger<DocumentService> logger, IConfiguration configuration)
     {
-        _documentRepository = documentRepository;   
+        _documentRepository = documentRepository;
         _loginUserDetailsService = loginUserDetailsService;
         _logger = logger;
         _configuration = configuration;
@@ -33,22 +33,22 @@ public class DocumentService : IDocumentService
             }
 
             var currentUserId = _loginUserDetailsService.GetCurrentUserId();
-            
-            List<string> validExtensions = new List<string>(){ ".jpg", ".png", "pdf" };
+
+            List<string> validExtensions = new List<string>() { ".jpg", ".png", "pdf" };
 
             string documentExtension = Path.GetExtension(document.uploadDocument.FileName);
-            if(!validExtensions.Contains(documentExtension))
+            if (!validExtensions.Contains(documentExtension))
             {
-                new Response(400,"Invalid File Type");
+                new Response(400, "Invalid File Type");
             }
             long documentSize = document.uploadDocument.Length;
-            if(documentSize > 5*1024*1024)
+            if (documentSize > 5 * 1024 * 1024)
             {
-                new Response(400," Max doc size can be 5MB ");
+                new Response(400, " Max doc size can be 5MB ");
             }
-            string fileName = Guid.NewGuid().ToString()+documentExtension;
-            string path = Path.Combine(_configuration["UploadedFiles:Path"],"UploadedDocuments");
-            using (FileStream stream = new FileStream(Path.Combine(path,fileName),FileMode.Create))
+            string fileName = Guid.NewGuid().ToString() + documentExtension;
+            string path = Path.Combine(_configuration["UploadedFiles:Path"], "UploadedDocuments");
+            using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
             {
                 document.uploadDocument.CopyTo(stream);
             }
@@ -75,56 +75,23 @@ public class DocumentService : IDocumentService
         }
     }
 
-    public async Task<Response> DeleteDocument(int documentId, int propertyId)
+    public async Task<Response> DeleteDocument(int documentId)
     {
-        try
-        {
-            if (documentId <= 0)
-            {
-                throw new ArgumentException("Invalid document ID");
-            }
+        var currentUserId = _loginUserDetailsService.GetCurrentUserId();
 
-            if (propertyId <= 0)
-            {
-                throw new ArgumentException("Invalid property ID");
-            }
+        var fileName = await _documentRepository.DeleteDocument(documentId,currentUserId);
+        string path = Path.Combine(_configuration["UploadedFiles:Path"], "UploadedDocuments", fileName);
+        
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+        }
+        else
+        {
+            _logger.LogWarning($"Physical file not found for document {documentId}: {path}");
+        }
 
-            var currentUserId = _loginUserDetailsService.GetCurrentUserId();
+        return new Response(200, "Document deleted successfully");
 
-            var deleted = await _documentRepository.DeleteDocument(documentId, propertyId);
-            if (!deleted)
-            {
-                throw new KeyNotFoundException(
-                    $"Document with ID {documentId} not found for property {propertyId}"
-                );
-            }
-
-            _logger.LogInformation(
-                $"Successfully deleted document {documentId} from property {propertyId}"
-            );
-            return new Response(200, "Document deleted successfully");
-        }
-        catch (ArgumentException ex)
-        {
-            _logger.LogWarning($"Invalid argument while deleting document: {ex.Message}");
-            throw;
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            _logger.LogWarning($"Unauthorized document deletion attempt: {ex.Message}");
-            throw;
-        }
-        catch (KeyNotFoundException ex)
-        {
-            _logger.LogWarning($"Document not found: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(
-                $"Error deleting document {documentId} from property {propertyId}: {ex.Message}"
-            );
-            throw new InvalidOperationException($"Failed to delete document", ex);
-        }
     }
 }

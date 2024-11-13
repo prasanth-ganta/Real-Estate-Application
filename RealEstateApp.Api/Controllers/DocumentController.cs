@@ -36,10 +36,10 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> DeleteDocument(int documentId, int propertyId)
+    public async Task<IActionResult> DeleteDocument(int documentId)
     {
-        var result = await _documentService.DeleteDocument(documentId, propertyId);
+
+        var result = await _documentService.DeleteDocument(documentId);
         return StatusCode(result.StatusCode, result);
     }
-
 }

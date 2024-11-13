@@ -30,13 +30,11 @@ public class PropertyController : ControllerBase
         var result = await _propertyService.CreateProperty(property);
         return StatusCode(result.StatusCode, result.Value);
     }
-    [Authorize(Roles = "User,Admin")]
-    [HttpPost("GetOwnedProperties")]
+
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
     [Authorize(Roles = "User,Admin")]
     [HttpGet("GetOwnedProperties")]
     public async Task<IActionResult> GetOwnedProperties(PropertyListingTypeEnum retivalOption)
@@ -177,6 +175,13 @@ public class PropertyController : ControllerBase
     public async Task<IActionResult> RemoveFromFavorites(int propertyId)
     {
         var result = await _propertyService.RemoveFromFavorites(propertyId);
+        return StatusCode(result.StatusCode, result);
+    }
+
+    [HttpGet("favorites")]
+    public async Task<IActionResult> GetFavorites(PropertyListingTypeEnum propertyListingType)
+    {
+        var result = await _propertyService.GetFavorites(propertyListingType);
         return StatusCode(result.StatusCode, result);
     }
 }

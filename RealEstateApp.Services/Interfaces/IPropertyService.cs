@@ -30,5 +30,6 @@ public interface IPropertyService
     //Favourites
     Task<Response> AddToFavorites(int propertyId);
     Task<Response> RemoveFromFavorites(int propertyId);
-
+    //Task GetFavorites(PropertyListingTypeEnum propertyListingType);
+    Task<Response>GetFavorites(PropertyListingTypeEnum propertyListingType);
 }

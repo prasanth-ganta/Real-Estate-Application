@@ -6,5 +6,5 @@ namespace RealEstateApp.Services.Interfaces;
 public interface IDocumentService
 {
     public Task<Response> AddDocument(DocumentDTO document, int propertyId);
-    public Task<Response> DeleteDocument(int documentId, int propertyId);
+    public Task<Response> DeleteDocument(int documentId);
 }
