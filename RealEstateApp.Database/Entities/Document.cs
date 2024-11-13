@@ -10,6 +10,7 @@ public class Document
     [Url]
     public string Url {get;set;}
     public string Description {get;set;}
+    public bool IsActive { get; set; } = true;
 
     //ForignKey
     public int PropertyId {get;set;}

@@ -6,12 +6,7 @@ namespace RealEstateApp.Database.Data;
 
 public class RealEstateDbContext : DbContext
 {
-    // private readonly ICurrentUser _currentUser;
-
-    public RealEstateDbContext(DbContextOptions<RealEstateDbContext> options) : base(options)
-    {
-        // _currentUser = currentUser;
-    }
+    public RealEstateDbContext(DbContextOptions<RealEstateDbContext> options) : base(options){}
 
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
@@ -31,61 +26,24 @@ public class RealEstateDbContext : DbContext
         // Configure shadow properties to all entities
         foreach (var entity in modelBuilder.Model.GetEntityTypes())
         {
-            modelBuilder.Entity(entity.Name).Property<DateTime>("CreatedAt").HasDefaultValueSql("GETDATE()");
-            modelBuilder.Entity(entity.Name).Property<DateTime?>("ModifiedAt").HasDefaultValueSql("GETDATE()"); ;
+            modelBuilder.Entity(entity.Name).Property<DateTime?>("CreatedAt").HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity(entity.Name).Property<DateTime?>("ModifiedAt");
             modelBuilder.Entity(entity.Name).Property<string>("CreatedBy");
             modelBuilder.Entity(entity.Name).Property<string>("ModifiedBy");
-            modelBuilder.Entity(entity.Name).Property<bool>("IsActive").HasDefaultValueSql("1");
         }
 
-        // Seed data
-        Role userRole = new Role { ID = 1, Name = "User" };
-        Role adminRole = new Role { ID = 2, Name = "Admin" };
-
-        modelBuilder.Entity<Role>().HasData(userRole, adminRole);
-        modelBuilder.Entity<ApprovalStatus>().HasData(
-            new ApprovalStatus { ID = 1, Status = "Pending" },
-            new ApprovalStatus { ID = 2, Status = "Approved" }
-        );
-
-        modelBuilder.Entity<PropertyStatus>().HasData(
-            new PropertyStatus { ID = 1, Status = "Rent" },
-            new PropertyStatus { ID = 2, Status = "Sell" },
-            new PropertyStatus { ID = 3, Status = "Unavailable" }
-        );
-
-
-        // Seed PropertyType data 
-        modelBuilder.Entity<PropertyType>().HasData(
-            new PropertyType { ID = (int)Utility.Enumerations.PropertyTypeEnum.Residential, Name = "Residential" }, 
-            new PropertyType { ID = (int)Utility.Enumerations.PropertyTypeEnum.Commercial, Name = "Commercial" }, 
-            new PropertyType { ID = (int)Utility.Enumerations.PropertyTypeEnum.Land, Name = "Land" }, 
-            new PropertyType { ID = (int)Utility.Enumerations.PropertyTypeEnum.SpecialPurpose, Name = "Special Purpose" }, 
-            new PropertyType { ID = (int)Utility.Enumerations.PropertyTypeEnum.Luxuary, Name = "Luxury" }); 
-
-            // Seed PropertySubType data 
-            modelBuilder.Entity<PropertySubType>().HasData( new PropertySubType { Id = 1, Name = "BHK1" },
-            new PropertySubType { Id = 2, Name = "BHK2" }, 
-            new PropertySubType { Id = 3, Name = "BHK3" }, 
-            new PropertySubType { Id = 4, Name = "BHK4" }, 
-            new PropertySubType { Id = 5, Name = "Office" }, 
-            new PropertySubType { Id = 6, Name = "Retail" }, 
-            new PropertySubType { Id = 7, Name = "Industrial" }, 
-            new PropertySubType { Id = 8, Name = "VacantLand" }, 
-            new PropertySubType { Id = 9, Name = "AgricultureLand" }, 
-            new PropertySubType { Id = 10, Name = "RecreationalLand" }, 
-            new PropertySubType { Id = 11, Name = "Hotel" }, 
-            new PropertySubType { Id = 12, Name = "Hospital" }, 
-            new PropertySubType { Id = 13, Name = "School" },
-             new PropertySubType { Id = 14, Name = "OldAgeHome" } );
-
         modelBuilder.ApplyConfiguration(new UserConfig());
+        modelBuilder.ApplyConfiguration(new ApprovalStatusConfig());
+        modelBuilder.ApplyConfiguration(new PropertyStatusConfig());
+        modelBuilder.ApplyConfiguration(new PropertySubTypeConfig());
+        modelBuilder.ApplyConfiguration(new PropertyTypeConfig());
+        modelBuilder.ApplyConfiguration(new RoleConfig());
         modelBuilder.ApplyConfiguration(new PropertyConfig());
         modelBuilder.ApplyConfiguration(new DocumentConfig());
         modelBuilder.ApplyConfiguration(new LocationConfig());
         modelBuilder.ApplyConfiguration(new MessageConfig());
     }
-    public override int SaveChanges()
+    public async Task<int> SaveChangesWithUserName(string username, CancellationToken cancellationToken = default)
     {
         var entries = ChangeTracker.Entries();
         foreach (var entry in entries)
@@ -93,14 +51,14 @@ public class RealEstateDbContext : DbContext
             if (entry.State == EntityState.Added)
             {
                 entry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
-                entry.Property("CreatedBy").CurrentValue = "fgh";
+                entry.Property("CreatedBy").CurrentValue = username;
             }
             else if (entry.State == EntityState.Modified)
             {
-                entry.Property("ModifiedBy").CurrentValue = DateTime.UtcNow;
-                entry.Property("CreatedBy").CurrentValue = "_currentUser.GetCurrentUserName()";
+                entry.Property("ModifiedAt").CurrentValue = DateTime.UtcNow;
+                entry.Property("ModifiedBy").CurrentValue = username;
             }
         }
-        return base.SaveChanges();
+        return await SaveChangesAsync(cancellationToken);
     }
 }

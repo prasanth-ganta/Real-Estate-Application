@@ -17,8 +17,7 @@ private readonly RealEstateDbContext _context;
     public async Task<bool> AddUser (User user)
     {
         await _context.Users.AddAsync(user);
-        _context.Entry(user).Property<bool>("IsActive").CurrentValue = false;
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return true;
     }
 
