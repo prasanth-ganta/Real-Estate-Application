@@ -31,7 +31,6 @@ public static class ConfigurationServicesExtension
         (
             options => {
                 options.UseSqlServer(configuration.GetConnectionString("DbString"));
-                new string("");
             }
 
         );

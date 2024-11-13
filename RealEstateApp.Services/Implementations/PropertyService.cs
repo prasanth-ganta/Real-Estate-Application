@@ -165,7 +165,7 @@ public class PropertyService : IPropertyService
         return responseProperty;
     }
 
-    public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForBuyByLocation(string city, string state)
+    public async Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByLocation(string city, string state)
     {
         try
         {
@@ -175,7 +175,7 @@ public class PropertyService : IPropertyService
             }
 
             var properties = await _propertyRepository.GetPropertiesForBuyByLocation(city, state);
-            return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
+            return _mapper.Map<IEnumerable<PropertyResponseDTO>>(properties);
         }
         catch (Exception ex)
         {
@@ -202,7 +202,7 @@ public class PropertyService : IPropertyService
                 throw new KeyNotFoundException($"Property with ID {id} not found");
             }
 
-            existingProperty.StatusId = (int)propertyListingType;
+            existingProperty.PropertyStatusId = (int)propertyListingType;
             await _propertyRepository.UpdatePropertyStatus(existingProperty);
             return new Response(200, "Property Updated Successfully");
         }
@@ -223,7 +223,7 @@ public class PropertyService : IPropertyService
         }
     }
 
-    public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForBuyByPincode(
+    public async Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByPincode(
         int zipCode
     )
     {
@@ -235,7 +235,7 @@ public class PropertyService : IPropertyService
             }
 
             var properties = await _propertyRepository.GetPropertiesForBuyByPincode(zipCode);
-            return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
+            return _mapper.Map<IEnumerable<PropertyResponseDTO>>(properties);
         }
         catch (Exception ex)
         {
@@ -244,7 +244,7 @@ public class PropertyService : IPropertyService
         }
     }
 
-    public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForBuyByPriceRange(
+    public async Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByPriceRange(
         double minPrice,
         double maxPrice
     )
@@ -265,7 +265,7 @@ public class PropertyService : IPropertyService
                 minPrice,
                 maxPrice
             );
-            return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
+            return _mapper.Map<IEnumerable<PropertyResponseDTO>>(properties);
         }
         catch (ArgumentException ex)
         {
@@ -281,7 +281,7 @@ public class PropertyService : IPropertyService
         }
     }
 
-    public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByLocation(
+    public async Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByLocation(
         string city,
         string state
     )
@@ -294,7 +294,7 @@ public class PropertyService : IPropertyService
             }
 
             var properties = await _propertyRepository.GetPropertiesForRentByLocation(city, state);
-            return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
+            return _mapper.Map<IEnumerable<PropertyResponseDTO>>(properties);
         }
         catch (ArgumentException ex)
         {
@@ -313,7 +313,7 @@ public class PropertyService : IPropertyService
         }
     }
 
-    public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByPincode(
+    public async Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByPincode(
         int zipCode
     )
     {
@@ -325,7 +325,7 @@ public class PropertyService : IPropertyService
             }
 
             var properties = await _propertyRepository.GetPropertiesForRentByPincode(zipCode);
-            return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
+            return _mapper.Map<IEnumerable<PropertyResponseDTO>>(properties);
         }
         catch (ArgumentException ex)
         {
@@ -344,7 +344,7 @@ public class PropertyService : IPropertyService
         }
     }
 
-    public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByPriceRange(
+    public async Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByPriceRange(
         double minPrice,
         double maxPrice
     )
@@ -365,7 +365,7 @@ public class PropertyService : IPropertyService
                 minPrice,
                 maxPrice
             );
-            return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
+            return _mapper.Map<IEnumerable<PropertyResponseDTO>>(properties);
         }
         catch (ArgumentException ex)
         {
@@ -384,7 +384,7 @@ public class PropertyService : IPropertyService
         }
     }
 
-    public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByName(
+    public async Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByName(
         string propertyName
     )
     {
@@ -396,7 +396,7 @@ public class PropertyService : IPropertyService
             }
 
             var properties = await _propertyRepository.GetPropertiesForRentByName(propertyName);
-            return _mapper.Map<IEnumerable<PropertySearchResultDto>>(properties);
+            return _mapper.Map<IEnumerable<PropertyResponseDTO>>(properties);
         }
         catch (ArgumentException ex)
         {

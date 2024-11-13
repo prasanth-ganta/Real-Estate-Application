@@ -16,16 +16,16 @@ public interface IPropertyService
     Task<Response> UpdatePropertyStatus(int id, PropertyListingTypeEnum propertyListingType);
 
     // Buy Methods
-    Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForBuyByLocation(string city, string state);
-    Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForBuyByPincode(int zipCode);
-    Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForBuyByPriceRange(double minPrice, double maxPrice);
-    //Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForBuyByType(int propertyTypeId);
+    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByLocation(string city, string state);
+    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByPincode(int zipCode);
+    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByPriceRange(double minPrice, double maxPrice);
+    //Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByType(int propertyTypeId);
 
     // Rent Methods
-    Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByLocation(string city, string state);
-    Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByPincode(int zipCode);
-    Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByPriceRange(double minPrice, double maxPrice);
-    Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByName(string propertyName);
+    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByLocation(string city, string state);
+    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByPincode(int zipCode);
+    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByPriceRange(double minPrice, double maxPrice);
+    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByName(string propertyName);
 
     //Favourites
     Task<Response> AddToFavorites(int propertyId);

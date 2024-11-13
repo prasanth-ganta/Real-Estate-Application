@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using RealEstateApp.Database.Entities;
 using RealEstateApp.Database.Interfaces;
+using RealEstateApp.Services.DTOs;
 using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.Interfaces;
 using RealEstateApp.Services.ResponseType;
@@ -17,17 +18,25 @@ public class UserService : IUserService
     private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
     private readonly IConfiguration _configuration;
+    private readonly ILoginUserDetailsService _loginDetails;
 
-    public UserService(IMapper mapper, IUserRepository userRepository, IConfiguration configuration)
+    public UserService(IMapper mapper, IUserRepository userRepository, IConfiguration configuration, ILoginUserDetailsService loginUserDetails)
     {
         _mapper = mapper;
         _userRepository = userRepository;
         _configuration = configuration;
+        _loginDetails = loginUserDetails;
     }
 
-    public Response GetAllUsers()
+    public async Task<Response> GetAllUsers()
     {
-        return new Response(200, _userRepository.GetAllUsers());
+        List<User> users =await _userRepository.GetAllUsers();
+        if(users == null)
+        {
+            return new Response(204, "No Users");
+        }
+        List<UserDTO> usersList = _mapper.Map<List<UserDTO>>(users);
+        return new Response(200, usersList);
     }
 
     public async Task<Response> Login(LoginDTO loginUser)
@@ -36,6 +45,10 @@ public class UserService : IUserService
         if (user == null)
         {
             return new Response(409, "User does not Exist! Need To register First");
+        }
+        else if(!user.IsActive)
+        {
+            return new Response(409, "User is Deactivated by admin. Contact Admin.");
         }
         if (BCrypt.Net.BCrypt.Verify(loginUser.Password, user.Password))
         {
@@ -63,6 +76,24 @@ public class UserService : IUserService
         return new Response(201, new { user = user.Email, Message = " Successfully Registered" });
     }
 
+    public async Task<Response> DeactivateUser(int userId)
+    {
+        if( await _userRepository.DeactivateUser(userId,_loginDetails.GetCurrentUserName()))
+        {
+            return new Response(200,"Successfully Deactivated");
+        }
+        return new Response(400,"User doesn't exit or Already Deactivated");
+    }
+
+    public async Task<Response> ActivateUser(int userId)
+    {
+        if( await _userRepository.ActivateUser(userId,_loginDetails.GetCurrentUserName()))
+        {
+            return new Response(200,"Successfully Activated");
+        }
+        return new Response(400,"User Already Active");
+    }
+    
     private string GenerateJwtToken(User user)
     {
         var key = new SymmetricSecurityKey(
@@ -90,4 +121,5 @@ public class UserService : IUserService
         );
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
 }

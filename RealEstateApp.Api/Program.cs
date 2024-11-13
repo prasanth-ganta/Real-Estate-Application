@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
+using RealEstateApp.Api.Middlewares;
 using RealEstateApp.Services.ServiceExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -58,7 +59,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.MapControllers();
 
 app.Run();

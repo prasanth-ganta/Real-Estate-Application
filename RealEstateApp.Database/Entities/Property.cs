@@ -16,7 +16,6 @@ public class Property
     public int OwnerId { get; set; }
     public int LocationId { get; set; }
     public int ApprovalStatusId { get; set; }
-    public int StatusId { get; set; }
     public int PropertyStatusId { get; set; } 
 
     //Navigation Properties
