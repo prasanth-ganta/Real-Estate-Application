@@ -9,78 +9,74 @@ public class PropertyRepository : IPropertyRepository
 {
 
     private readonly RealEstateDbContext _realEstateDbContext;
-
-        public PropertyRepository(RealEstateDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task AddProperty(Property newProperty, string username)
-        {
-            await _context.Properties.AddAsync(newProperty);
-            await _context.SaveChangesWithUserName(username);
-        }
-
-        public async Task<List<Property>> GetAllPendingProperties()
-        {
-            IQueryable<Property> query = LoadAllProperties()
-                .Where(p => p.ApprovalStatusId == (int)ApprovalStatusEnum.Pending);
-
-            return await query.ToListAsync();
-        }
-
-        public async Task<List<Property>> GetAllProperties(RetrivalOptionsEnum retivalOption)
-        {         
-            IQueryable<Property> query = LoadAllProperties()
-                .Where(p => p.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
-
-            if(retivalOption != RetrivalOptionsEnum.All){
-                query = query.Where(p => p.PropertyStatusId == (int)retivalOption); 
-            }
-
-            return await query.ToListAsync();
-        }
-
-        public async Task<List<Property>> GetOwnedProperties(int ownerId, RetrivalOptionsEnum retivalOption)
-        {
-            IQueryable<Property> query = LoadAllProperties()
-                .Where(p=>p.OwnerId==ownerId);
-            
-            if(retivalOption != RetrivalOptionsEnum.All){
-                query = query.Where(p => p.PropertyStatusId == (int)retivalOption); 
-            }
-
-            return await query.ToListAsync(); 
-        }
-
-        public async Task<bool> SoftDeleteProperty(int id, string username)
-        {
-            Property property = await _context.Properties.FindAsync(id);
-
-            if (property == null || !property.IsActive) return false;
-
-            property.IsActive = false; 
-            await _context.SaveChangesWithUserName(username);
-            return true;
-        }
-
-        private IQueryable<Property> LoadAllProperties()
-        {
-            IQueryable<Property> query = _context.Properties
-                .Include(p => p.Owner)
-                .Include(p => p.ApprovalStatus)
-                .Include(p => p.PropertyStatus)
-                .Include(p => p.PropertyType)
-                .Include(p => p.SubPropertyType)
-                .Include(p => p.Documents)
-                .Include(p => p.Location)
-                .Where(p => p.IsActive == true);
-            return query;
-        }
-    }
     public PropertyRepository(RealEstateDbContext realEstateDbContext)
     {
         _realEstateDbContext = realEstateDbContext;
+    }
+
+    public async Task AddProperty(Property newProperty, string username)
+    {
+        await _realEstateDbContext.Properties.AddAsync(newProperty);
+        await _realEstateDbContext.SaveChangesWithUserName(username);
+    }
+
+    public async Task<List<Property>> GetAllPendingProperties()
+    {
+        IQueryable<Property> query = LoadAllProperties()
+            .Where(p => p.ApprovalStatusId == (int)ApprovalStatusEnum.Pending);
+
+        return await query.ToListAsync();
+    }
+
+    public async Task<List<Property>> GetAllProperties(PropertyListingTypeEnum retivalOption)
+    {
+        IQueryable<Property> query = LoadAllProperties()
+            .Where(p => p.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+
+        if (retivalOption != PropertyListingTypeEnum.All)
+        {
+            query = query.Where(p => p.PropertyStatusId == (int)retivalOption);
+        }
+
+        return await query.ToListAsync();
+    }
+
+    public async Task<List<Property>> GetOwnedProperties(int ownerId, PropertyListingTypeEnum retivalOption)
+    {
+        IQueryable<Property> query = LoadAllProperties()
+            .Where(p => p.OwnerId == ownerId);
+
+        if (retivalOption != PropertyListingTypeEnum.All)
+        {
+            query = query.Where(p => p.PropertyStatusId == (int)retivalOption);
+        }
+
+        return await query.ToListAsync();
+    }
+
+    public async Task<bool> SoftDeleteProperty(int id, string username)
+    {
+        Property property = await _realEstateDbContext.Properties.FindAsync(id);
+
+        if (property == null || !property.IsActive) return false;
+
+        property.IsActive = false;
+        await _realEstateDbContext.SaveChangesWithUserName(username);
+        return true;
+    }
+
+    private IQueryable<Property> LoadAllProperties()
+    {
+        IQueryable<Property> query = _realEstateDbContext.Properties
+            .Include(p => p.Owner)
+            .Include(p => p.ApprovalStatus)
+            .Include(p => p.PropertyStatus)
+            .Include(p => p.PropertyType)
+            .Include(p => p.SubPropertyType)
+            .Include(p => p.Documents)
+            .Include(p => p.Location)
+            .Where(p => p.IsActive == true);
+        return query;
     }
     public async Task AddProperty(Property newProperty)
     {
@@ -196,18 +192,11 @@ public class PropertyRepository : IPropertyRepository
             .ToListAsync();
     }
 
-    public async Task<bool> AddDocument(Document document,int propertyId){
-        document.PropertyId = propertyId;
-        _realEstateDbContext.Documents.AddAsync(document);
-        await _realEstateDbContext.SaveChangesAsync();
-        return true;
-    }
-    
     public async Task<bool> DeleteDocument(int documentId, int propertyId)
     {
         var document = await _realEstateDbContext.Documents
             .FirstOrDefaultAsync(d => d.ID == documentId && d.PropertyId == propertyId);
-        
+
         if (document == null)
         {
             return false;
@@ -242,7 +231,7 @@ public class PropertyRepository : IPropertyRepository
         return true;
 
     }
-    
+
 
     public async Task<bool> RemoveFromFavorites(int userId, int propertyId)
     {
@@ -268,5 +257,5 @@ public class PropertyRepository : IPropertyRepository
         return true;
     }
 
-    
+
 }

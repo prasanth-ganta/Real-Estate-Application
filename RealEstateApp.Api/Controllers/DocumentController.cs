@@ -9,11 +9,11 @@ namespace RealEstateApp.Api.Controllers;
 [ApiController]
 public class DocumentController : ControllerBase
 {
-    private readonly IPropertyService _propertyService;
+    private readonly IDocumentService _documentService;
 
-    public DocumentController(IPropertyService propertyService)
+    public DocumentController(IDocumentService documentService)
     {
-        _propertyService = propertyService;
+        _documentService = documentService;
     }
 
     [HttpPost("addDocuments")]
@@ -25,7 +25,7 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AddDocument([FromForm] DocumentDTO document, int propertyId)
     {
-        var result = await _propertyService.AddDocument(document, propertyId);
+        var result = await _documentService.AddDocument(document, propertyId);
         return StatusCode(result.StatusCode, result);
     }
 
@@ -38,7 +38,7 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteDocument(int documentId, int propertyId)
     {
-        var result = await _propertyService.DeleteDocument(documentId, propertyId);
+        var result = await _documentService.DeleteDocument(documentId, propertyId);
         return StatusCode(result.StatusCode, result);
     }
 

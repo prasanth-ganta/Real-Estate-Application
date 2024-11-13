@@ -7,7 +7,6 @@ using RealEstateApp.Database.Interfaces;
 using RealEstateApp.Services.DTOs;
 using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.DTOs.ResponseDTOs;
-using RealEstateApp.Services.DTOs.ResponseDTOs;
 using RealEstateApp.Services.Interfaces;
 using RealEstateApp.Services.ResponseType;
 using RealEstateApp.Utility.Enumerations;
@@ -54,30 +53,6 @@ public class PropertyService : IPropertyService
 
     public async Task<Response> CreateProperty(PropertyDTO property)
     {
-        var propertyLocation = new Location
-        {
-            ZipCode = property.Location.ZipCode,
-            City = property.Location.City,
-            State = property.Location.State,
-            Country = property.Location.Country,
-            GeoLocation = property.Location.GeoLocation
-        };
-    
-        var newProperty = new Property 
-        { 
-            Name = property.Name,
-            Description = property.Description,
-            Price = property.Price, 
-            PropertyTypeId = (int)property.PropertyType, 
-            SubPropertyTypeId = (int)property.PropertySubType, 
-            ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
-            PropertyStatusId = (int)property.PropertyStatus, 
-            Location = propertyLocation,
-            
-            OwnerId = int.Parse(_httpContextAccessor.HttpContext?.User?.FindFirst("userId").Value)
-        };
-        await _propertyRepository.AddProperty(newProperty, _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name).Value);
-    return new Response(200,"Property Created Successfully");
         try
         {
             if (property == null)
@@ -130,10 +105,10 @@ public class PropertyService : IPropertyService
         {
             responseProperty.Add(MappingProperty(property));
         }
-        return new Response(200,responseProperty);
+        return new Response(200, responseProperty);
     }
 
-    public async Task<Response> GetAllProperties(RetrivalOptionsEnum retivalOption)
+    public async Task<Response> GetAllProperties(PropertyListingTypeEnum retivalOption)
     {
         var result = await _propertyRepository.GetAllProperties(retivalOption);
         List<PropertyResponseDTO> responseProperty = new List<PropertyResponseDTO>();
@@ -141,10 +116,10 @@ public class PropertyService : IPropertyService
         {
             responseProperty.Add(MappingProperty(property));
         }
-        return new Response(200,responseProperty);    
+        return new Response(200, responseProperty);
     }
-    
-    public async Task<Response> GetOwnedProperties(RetrivalOptionsEnum retivalOption)
+
+    public async Task<Response> GetOwnedProperties(PropertyListingTypeEnum retivalOption)
     {
         var result = await _propertyRepository.GetOwnedProperties(int.Parse(_httpContextAccessor.HttpContext.User.FindFirst("userId").Value), retivalOption);
         List<PropertyResponseDTO> responseProperty = new List<PropertyResponseDTO>();
@@ -152,18 +127,19 @@ public class PropertyService : IPropertyService
         {
             responseProperty.Add(MappingProperty(property));
         }
-        return new Response(200,responseProperty); 
+        return new Response(200, responseProperty);
     }
 
     public async Task<Response> SoftDeleteProperty(int id)
     {
         string username = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name).Value;
         bool isDeleted = await _propertyRepository.SoftDeleteProperty(id, username);
-        if( isDeleted == true ) return new Response(200,"Deleted successfully"); 
-        return new Response(404,"property was not found or already deleted");
+        if (isDeleted == true) return new Response(200, "Deleted successfully");
+        return new Response(404, "property was not found or already deleted");
     }
 
-    private PropertyResponseDTO MappingProperty(Property property){
+    private PropertyResponseDTO MappingProperty(Property property)
+    {
 
         var propertyLocation = new LocationDTO
         {
@@ -173,42 +149,23 @@ public class PropertyService : IPropertyService
             Country = property.Location.Country,
             GeoLocation = property.Location.GeoLocation
         };
-    
-        var responseProperty = new PropertyResponseDTO 
-        { 
+
+        var responseProperty = new PropertyResponseDTO
+        {
             Name = property.Name,
             Description = property.Description,
-            Price = property.Price, 
-            PropertyType = property.PropertyType.Name, 
-            PropertySubType = property.SubPropertyType.Name, 
-            PropertyStatus = property.PropertyStatus.Status, 
-            ApprovalStatus = property.ApprovalStatus.Status, 
+            Price = property.Price,
+            PropertyType = property.PropertyType.Name,
+            PropertySubType = property.SubPropertyType.Name,
+            PropertyStatus = property.PropertyStatus.Status,
+            ApprovalStatus = property.ApprovalStatus.Status,
             Location = propertyLocation,
             OwnerName = property.Owner.FullName
         };
         return responseProperty;
-        try
-        {
-            var userId = GetCurrentUserId();
-            var result = await _propertyRepository.GetOwnedProperties(userId);
-            return new Response(200, result);
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            _logger.LogError($"Authorization error while fetching owned properties: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error occurred while fetching owned properties: {ex.Message}");
-            throw new InvalidOperationException("Failed to retrieve owned properties", ex);
-        }
     }
 
-    public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForBuyByLocation(
-        string city,
-        string state
-    )
+    public async Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForBuyByLocation(string city, string state)
     {
         try
         {
@@ -227,10 +184,7 @@ public class PropertyService : IPropertyService
         }
     }
 
-    public async Task<Response> UpdatePropertyStatus(
-        int id,
-        PropertyListingTypeEnum propertyListingType
-    )
+    public async Task<Response> UpdatePropertyStatus(int id, PropertyListingTypeEnum propertyListingType)
     {
         try
         {
@@ -455,108 +409,6 @@ public class PropertyService : IPropertyService
                 $"Error searching rental properties by name '{propertyName}': {ex.Message}"
             );
             throw new InvalidOperationException("Failed to search rental properties by name", ex);
-        }
-    }
-
-    public async Task<Response> AddDocument(DocumentDTO documentDTO, int propertyId)
-    {
-        try
-        {
-            if (documentDTO == null)
-            {
-                throw new ArgumentNullException(nameof(documentDTO));
-            }
-
-            var currentUserId = GetCurrentUserId();
-            var userProperties = await _propertyRepository.GetOwnedProperties(currentUserId);
-
-            if (!userProperties.Any(p => p.ID == propertyId))
-            {
-                throw new UnauthorizedAccessException(
-                    "You don't have permission to add documents to this property"
-                );
-            }
-
-            var document = new Document
-            {
-                Url = documentDTO.Url,
-                Description = documentDTO.Description,
-                PropertyId = propertyId,
-            };
-
-            await _propertyRepository.AddDocument(document, propertyId);
-            return new Response(201, "Document added successfully");
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            _logger.LogWarning($"Unauthorized document addition attempt: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Error adding document to property {propertyId}: {ex.Message}");
-            throw new InvalidOperationException("Failed to add document to property", ex);
-        }
-    }
-
-    public async Task<Response> DeleteDocument(int documentId, int propertyId)
-    {
-        try
-        {
-            if (documentId <= 0)
-            {
-                throw new ArgumentException("Invalid document ID");
-            }
-
-            if (propertyId <= 0)
-            {
-                throw new ArgumentException("Invalid property ID");
-            }
-
-            var currentUserId = GetCurrentUserId();
-            var userProperties = await _propertyRepository.GetOwnedProperties(currentUserId);
-
-            if (!userProperties.Any(p => p.ID == propertyId))
-            {
-                throw new UnauthorizedAccessException(
-                    "You don't have permission to delete documents from this property"
-                );
-            }
-
-            var deleted = await _propertyRepository.DeleteDocument(documentId, propertyId);
-            if (!deleted)
-            {
-                throw new KeyNotFoundException(
-                    $"Document with ID {documentId} not found for property {propertyId}"
-                );
-            }
-
-            _logger.LogInformation(
-                $"Successfully deleted document {documentId} from property {propertyId}"
-            );
-            return new Response(200, "Document deleted successfully");
-        }
-        catch (ArgumentException ex)
-        {
-            _logger.LogWarning($"Invalid argument while deleting document: {ex.Message}");
-            throw;
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            _logger.LogWarning($"Unauthorized document deletion attempt: {ex.Message}");
-            throw;
-        }
-        catch (KeyNotFoundException ex)
-        {
-            _logger.LogWarning($"Document not found: {ex.Message}");
-            throw;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(
-                $"Error deleting document {documentId} from property {propertyId}: {ex.Message}"
-            );
-            throw new InvalidOperationException($"Failed to delete document", ex);
         }
     }
 

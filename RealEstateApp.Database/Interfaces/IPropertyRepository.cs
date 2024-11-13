@@ -6,8 +6,8 @@ namespace RealEstateApp.Database.Interfaces;
 public interface IPropertyRepository
 {
     public Task AddProperty(Property newProperty, string username);
-    public Task<List<Property>> GetAllProperties(RetrivalOptionsEnum propertyStatus);
-    public Task<List<Property>> GetOwnedProperties(int ownerId, RetrivalOptionsEnum retivalOption);
+    public Task<List<Property>> GetAllProperties(PropertyListingTypeEnum propertyStatus);
+    public Task<List<Property>> GetOwnedProperties(int ownerId, PropertyListingTypeEnum retivalOption);
     public Task<List<Property>> GetAllPendingProperties();
     public Task<bool> SoftDeleteProperty(int id, string value);
     Task AddProperty(Property newProperty);
@@ -17,7 +17,6 @@ public interface IPropertyRepository
     Task<IEnumerable<Property>> GetPropertiesForBuyByLocation(string city, string state);
     Task<IEnumerable<Property>> GetPropertiesForBuyByPincode(int zipCode);
     Task<IEnumerable<Property>> GetPropertiesForBuyByPriceRange(double minPrice, double maxPrice);
-    //Task<IEnumerable<Property>> GetPropertiesForBuyByType(int propertyTypeId);
     
     // Rent Methods
     Task<IEnumerable<Property>> GetPropertiesForRentByLocation(string city, string state);
@@ -26,7 +25,6 @@ public interface IPropertyRepository
     Task<IEnumerable<Property>> GetPropertiesForRentByName(string propertyName);
 
     //documents
-    Task<bool> AddDocument(Document document,int propertyId);
     Task<bool> DeleteDocument(int documentId,int propertyId);
     
     //Favourites 

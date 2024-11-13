@@ -30,50 +30,44 @@ public class PropertyController : ControllerBase
         var result = await _propertyService.CreateProperty(property);
         return StatusCode(result.StatusCode, result.Value);
     }
-
-        [Authorize(Roles ="User,Admin")]
-        [HttpGet("GetOwnedProperties")]
-        public async Task<IActionResult> GetOwnedProperties(RetrivalOptionsEnum retivalOption)
-        {
-            var result = await _propertyService.GetOwnedProperties(retivalOption);
-            return StatusCode(result.StatusCode,result.Value);
-        }
-
-        [Authorize(Roles ="User,Admin")]
-        [HttpGet("GetAllProperties")]
-        public async Task<IActionResult> GetAllProperties(RetrivalOptionsEnum retivalOption)
-        {
-            var result = await _propertyService.GetAllProperties(retivalOption);
-            return StatusCode(result.StatusCode,result.Value);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpGet("Admin/GetAllPendingProperties")]
-        public async Task<IActionResult> GetAllPendingProperties()
-        {
-            var result = await _propertyService.GetAllPendingProperties();
-            return StatusCode(result.StatusCode,result.Value);
-        }
-
-        [Authorize(Roles = "User,Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProperty(int id)
-        {
-            var result = await _propertyService.SoftDeleteProperty(id);
-            return StatusCode(result.StatusCode,result.Value);
-
-        }
-
     [Authorize(Roles = "User,Admin")]
     [HttpPost("GetOwnedProperties")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetOwnedProperties()
+
+    [Authorize(Roles = "User,Admin")]
+    [HttpGet("GetOwnedProperties")]
+    public async Task<IActionResult> GetOwnedProperties(PropertyListingTypeEnum retivalOption)
     {
-        var result = await _propertyService.GetOwnedProperties();
+        var result = await _propertyService.GetOwnedProperties(retivalOption);
         return StatusCode(result.StatusCode, result.Value);
+    }
+
+    [Authorize(Roles = "User,Admin")]
+    [HttpGet("GetAllProperties")]
+    public async Task<IActionResult> GetAllProperties(PropertyListingTypeEnum retivalOption)
+    {
+        var result = await _propertyService.GetAllProperties(retivalOption);
+        return StatusCode(result.StatusCode, result.Value);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("Admin/GetAllPendingProperties")]
+    public async Task<IActionResult> GetAllPendingProperties()
+    {
+        var result = await _propertyService.GetAllPendingProperties();
+        return StatusCode(result.StatusCode, result.Value);
+    }
+
+    [Authorize(Roles = "User,Admin")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProperty(int id)
+    {
+        var result = await _propertyService.SoftDeleteProperty(id);
+        return StatusCode(result.StatusCode, result.Value);
+
     }
 
     [HttpPut("UpdateProperty{id}")]
@@ -154,7 +148,7 @@ public class PropertyController : ControllerBase
         var properties = await _propertyService.SearchPropertiesForRentByPriceRange(minPrice, maxPrice);
         return Ok(properties);
     }
-    
+
     [HttpGet("rent/by-name")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -164,7 +158,7 @@ public class PropertyController : ControllerBase
         IEnumerable<PropertySearchResultDto> properties = await _propertyService.SearchPropertiesForRentByName(propertyName);
         return Ok(properties);
     }
-    
+
     [HttpPost("addFavourites/{propertyId}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
