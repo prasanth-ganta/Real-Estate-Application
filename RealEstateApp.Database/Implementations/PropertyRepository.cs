@@ -7,24 +7,28 @@ namespace RealEstateApp.Database.Implementations;
 public class PropertyRepository : IPropertyRepository
 {
 
-    private readonly RealEstateDbContext _context;
+    private readonly RealEstateDbContext _realEstateDbContext;
 
-    public PropertyRepository(RealEstateDbContext context)
+    public PropertyRepository(RealEstateDbContext realEstateDbContext)
     {
-        _context = context;
+        _realEstateDbContext = realEstateDbContext;
     }
     public async Task AddProperty(Property newProperty)
     {
-        await _context.Properties.AddAsync(newProperty);
-        await _context.SaveChangesAsync();
+        await _realEstateDbContext.Properties.AddAsync(newProperty);
+        await _realEstateDbContext.SaveChangesAsync();
     }
-
     public async Task<List<Property>> GetOwnedProperties(int ownerId)
     {
-        return await _context.Properties.Include(p => p.Owner).Include(p => p.Location).Where(p => p.OwnerId == ownerId).ToListAsync();
+        return await _realEstateDbContext.Properties.Include(p => p.Owner).Include(p => p.Location).Where(p => p.OwnerId == ownerId).ToListAsync();
 
     }
-    private readonly RealEstateDbContext _realEstateDbContext;
+
+    public async Task UpdatePropertyStatus(Property updatedProperty)
+    {
+        _realEstateDbContext.Properties.Update(updatedProperty);
+        await _realEstateDbContext.SaveChangesAsync();
+    }
 
     //// Buy Methods Implementation
     public async Task<IEnumerable<Property>> GetPropertiesForBuyByLocation(string city, string state)
@@ -123,57 +127,77 @@ public class PropertyRepository : IPropertyRepository
             .ToListAsync();
     }
 
-
-    // Get all Properties
-    public async Task<IEnumerable<Property>> GetAllProperties(int userId)
+    public async Task<bool> AddDocument(Document document,int propertyId){
+        document.PropertyId = propertyId;
+        _realEstateDbContext.Documents.AddAsync(document);
+        await _realEstateDbContext.SaveChangesAsync();
+        return true;
+    }
+    
+    public async Task<bool> DeleteDocument(int documentId, int propertyId)
     {
-        return await _realEstateDbContext.Properties
-            .Include(p => p.Location)
-            .Include(p => p.PropertyType)
-            .Include(p => p.SubPropertyType)
-            .Include(p => p.PropertyStatus)
-            .Where(p => p.OwnerId != userId && p.ApprovalStatus.Status == "Approved")
-            .ToListAsync();
+        var document = await _realEstateDbContext.Documents
+            .FirstOrDefaultAsync(d => d.ID == documentId && d.PropertyId == propertyId);
+        
+        if (document == null)
+        {
+            return false;
+        }
+        _realEstateDbContext.Documents.Remove(document);
+        await _realEstateDbContext.SaveChangesAsync();
+        return true;
     }
 
-    //Get user owned properties
-    public async Task<IEnumerable<Property>> GetOwnedPropertiesByUser(int userId)
+    //Favourite 
+    public async Task<bool> AddToFavorites(int userId, int propertyId)
     {
-        return await _realEstateDbContext.Properties
-            .Include(p => p.Location)
-            .Include(p => p.PropertyType)
-            .Include(p => p.SubPropertyType)
-            .Include(p => p.PropertyStatus)
-            .Where(p => p.OwnerId == userId && p.ApprovalStatus.Status == "Approved")
-            .ToListAsync();
-    }
+        var user = await _realEstateDbContext.Users
+            .Include(u => u.FavouriteProperties)
+            .FirstOrDefaultAsync(u => u.ID == userId);
 
-    // Get favorite properties for a specific user
-    public async Task<IEnumerable<Property>> GetFavoritePropertiesByUser(int userId)
-    {
-        return await _realEstateDbContext.Properties
-            .Include(p => p.Location)
-            .Include(p => p.PropertyType)
-            .Include(p => p.SubPropertyType)
-            .Include(p => p.PropertyStatus)
-            .Where(p => p.FavouritedByUsers.Any(u => u.ID == userId))
-            .ToListAsync();
-    }
-
-    public async Task<bool> ChangePropertyStatusToSell(int propertyId)
-    {
-        Property? property = await _realEstateDbContext.Properties
-            .Include(p => p.PropertyStatus)
+        var property = await _realEstateDbContext.Properties
             .FirstOrDefaultAsync(p => p.ID == propertyId);
 
-        if (property == null || property.PropertyStatus.Status == "Sell")
+        if (user == null || property == null)
         {
             return false;
         }
 
-        property.PropertyStatus.Status = "Sell";
+        if (user.FavouriteProperties.Any(p => p.ID == propertyId))
+        {
+            return false;
+        }
 
+        user.FavouriteProperties.Add(property);
+        await _realEstateDbContext.SaveChangesAsync();
+        return true;
+
+    }
+    
+
+    public async Task<bool> RemoveFromFavorites(int userId, int propertyId)
+    {
+        var user = await _realEstateDbContext.Users
+            .Include(u => u.FavouriteProperties)
+            .FirstOrDefaultAsync(u => u.ID == userId);
+
+        if (user == null)
+        {
+            return false;
+        }
+
+        var property = user.FavouriteProperties
+            .FirstOrDefault(p => p.ID == propertyId);
+
+        if (property == null)
+        {
+            return false;
+        }
+
+        user.FavouriteProperties.Remove(property);
         await _realEstateDbContext.SaveChangesAsync();
         return true;
     }
+
+    
 }

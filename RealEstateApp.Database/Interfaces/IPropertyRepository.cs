@@ -6,6 +6,7 @@ public interface IPropertyRepository
 {
     Task AddProperty(Property newProperty);
     Task<List<Property>> GetOwnedProperties(int ownerId);
+    Task UpdatePropertyStatus(Property updatedProperty);
      // Buy Methods
     Task<IEnumerable<Property>> GetPropertiesForBuyByLocation(string city, string state);
     Task<IEnumerable<Property>> GetPropertiesForBuyByPincode(int zipCode);
@@ -18,11 +19,11 @@ public interface IPropertyRepository
     Task<IEnumerable<Property>> GetPropertiesForRentByPriceRange(double minPrice, double maxPrice);
     Task<IEnumerable<Property>> GetPropertiesForRentByName(string propertyName);
 
-    // Property retrieval methods
-    Task<IEnumerable<Property>> GetAllProperties(int userId);
-    Task<IEnumerable<Property>> GetOwnedPropertiesByUser (int userId);
-    Task<IEnumerable<Property>> GetFavoritePropertiesByUser (int userId);
-
-    //Method to change property status to "Sell"
-    Task<bool> ChangePropertyStatusToSell(int propertyId);
+    //documents
+    Task<bool> AddDocument(Document document,int propertyId);
+    Task<bool> DeleteDocument(int documentId,int propertyId);
+    
+    //Favourites 
+    Task<bool> AddToFavorites(int userId, int propertyId);
+    Task<bool> RemoveFromFavorites(int userId, int propertyId);
 }

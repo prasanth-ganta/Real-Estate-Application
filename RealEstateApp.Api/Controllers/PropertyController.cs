@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RealEstateApp.Services.DTOs;
 using RealEstateApp.Services.DTOs.RequestDTOs;
+using RealEstateApp.Services.DTOs.ResponseDTOs;
 using RealEstateApp.Services.Interfaces;
+using RealEstateApp.Utility.Enumerations;
 
 namespace RealEstateApp.Api.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
 public class PropertyController : ControllerBase
@@ -18,6 +20,11 @@ public class PropertyController : ControllerBase
 
     [Authorize(Roles = "User,Admin")]
     [HttpPost("CreateProperty")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateProperty([FromForm] PropertyDTO property)
     {
         var result = await _propertyService.CreateProperty(property);
@@ -26,16 +33,31 @@ public class PropertyController : ControllerBase
 
     [Authorize(Roles = "User,Admin")]
     [HttpPost("GetOwnedProperties")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetOwnedProperties()
     {
         var result = await _propertyService.GetOwnedProperties();
         return StatusCode(result.StatusCode, result.Value);
     }
 
+    [HttpPut("UpdateProperty{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> UpdatePropertyStatus(int id, PropertyListingTypeEnum propertyListingType)
+    {
+        var result = await _propertyService.UpdatePropertyStatus(id, propertyListingType);
+        return StatusCode(result.StatusCode, result.Value);
+    }
 
-
-    // Buy Endpoints
     [HttpGet("buy/by-location")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SearchPropertiesForBuyByLocation(
         [FromQuery] string city,
         [FromQuery] string state)
@@ -45,6 +67,9 @@ public class PropertyController : ControllerBase
     }
 
     [HttpGet("buy/by-pincode")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SearchPropertiesForBuyByPincode([FromQuery] int zipCode)
     {
         IEnumerable<PropertySearchResultDto> properties = await _propertyService.SearchPropertiesForBuyByPincode(zipCode);
@@ -52,6 +77,9 @@ public class PropertyController : ControllerBase
     }
 
     [HttpGet("buy/by-price-range")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SearchPropertiesForBuyByPriceRange(
         [FromQuery] double minPrice,
         [FromQuery] double maxPrice)
@@ -60,8 +88,10 @@ public class PropertyController : ControllerBase
         return Ok(properties);
     }
 
-    // Rent Endpoints
     [HttpGet("rent/by-location")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SearchPropertiesForRentByLocation(
         [FromQuery] string city,
         [FromQuery] string state)
@@ -71,6 +101,9 @@ public class PropertyController : ControllerBase
     }
 
     [HttpGet("rent/by-pincode")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SearchPropertiesForRentByPincode([FromQuery] int zipCode)
     {
         var properties = await _propertyService.SearchPropertiesForRentByPincode(zipCode);
@@ -78,6 +111,9 @@ public class PropertyController : ControllerBase
     }
 
     [HttpGet("rent/by-price-range")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SearchPropertiesForRentByPriceRange(
         [FromQuery] double minPrice,
         [FromQuery] double maxPrice)
@@ -85,44 +121,35 @@ public class PropertyController : ControllerBase
         var properties = await _propertyService.SearchPropertiesForRentByPriceRange(minPrice, maxPrice);
         return Ok(properties);
     }
-
+    
     [HttpGet("rent/by-name")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> SearchPropertiesForRentByName([FromQuery] string propertyName)
     {
         IEnumerable<PropertySearchResultDto> properties = await _propertyService.SearchPropertiesForRentByName(propertyName);
         return Ok(properties);
     }
-
-    [HttpGet("exclude/{userId}")]
-    public async Task<IActionResult> GetAllProperties(int userId)
+    
+    [HttpPost("addFavourites/{propertyId}")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> AddToFavorites(int propertyId)
     {
-        IEnumerable<PropertySearchResultDto> properties = await _propertyService.GetAllProperties(userId);
-        return Ok(properties);
+        var result = await _propertyService.AddToFavorites(propertyId);
+        return StatusCode(result.StatusCode, result);
     }
 
-    [HttpGet("owned/{userId}")]
-    public async Task<IActionResult> GetOwnedPropertiesByUser(int userId)
+    [HttpDelete("removeFavourites/{propertyId}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> RemoveFromFavorites(int propertyId)
     {
-        IEnumerable<PropertySearchResultDto> properties = await _propertyService.GetOwnedPropertiesByUser(userId);
-        return Ok(properties);
+        var result = await _propertyService.RemoveFromFavorites(propertyId);
+        return StatusCode(result.StatusCode, result);
     }
-
-    [HttpGet("favorites/{userId}")]
-    public async Task<IActionResult> GetFavoritePropertiesByUser(int userId)
-    {
-        IEnumerable<PropertySearchResultDto> properties = await _propertyService.GetFavoritePropertiesByUser(userId);
-        return Ok(properties);
-    }
-
-    [HttpPut("sell/{propertyId}")]
-    public async Task<IActionResult> ChangePropertyStatusToSell(int propertyId)
-    {
-        bool result = await _propertyService.ChangePropertyStatusToSell(propertyId);
-        if (result)
-        {
-            return Ok(new { Message = "Property status changed to Sell." });
-        }
-        return NotFound(new { Message = "Property not found or already for sale." });
-    }
-
 }

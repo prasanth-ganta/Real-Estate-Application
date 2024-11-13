@@ -1,6 +1,7 @@
-using RealEstateApp.Services.DTOs;
 using RealEstateApp.Services.DTOs.RequestDTOs;
+using RealEstateApp.Services.DTOs.ResponseDTOs;
 using RealEstateApp.Services.ResponseType;
+using RealEstateApp.Utility.Enumerations;
 
 namespace RealEstateApp.Services.Interfaces;
 
@@ -8,6 +9,7 @@ public interface IPropertyService
 {
     public Task<Response> CreateProperty(PropertyDTO property);
     public Task<Response> GetOwnedProperties();
+    Task<Response> UpdatePropertyStatus(int id, PropertyListingTypeEnum propertyListingType);
 
     // Buy Methods
     Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForBuyByLocation(string city, string state);
@@ -21,11 +23,11 @@ public interface IPropertyService
     Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByPriceRange(double minPrice, double maxPrice);
     Task<IEnumerable<PropertySearchResultDto>> SearchPropertiesForRentByName(string propertyName);
 
-    // Property retrieval methods
-    Task<IEnumerable<PropertySearchResultDto>> GetAllProperties(int userId);
-    Task<IEnumerable<PropertySearchResultDto>> GetFavoritePropertiesByUser(int userId);
-    Task<IEnumerable<PropertySearchResultDto>> GetOwnedPropertiesByUser(int userId);
+    //Documents methods
+    Task<Response> AddDocument(DocumentDTO documentDTO,int PropertyId);
+    Task<Response>DeleteDocument (int documentId,int propertyId);
+    //Favourites
+    Task<Response> AddToFavorites(int propertyId);
+    Task<Response> RemoveFromFavorites(int propertyId);
 
-    //Method to change property status to "Sell"
-    Task<bool> ChangePropertyStatusToSell(int propertyId);
 }

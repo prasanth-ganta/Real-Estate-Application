@@ -1,4 +1,4 @@
-namespace RealEstateApp.Services.DTOs;
+namespace RealEstateApp.Services.DTOs.ResponseDTOs;
 public class PropertySearchResultDto
 {
     public string Name { get; set; }
