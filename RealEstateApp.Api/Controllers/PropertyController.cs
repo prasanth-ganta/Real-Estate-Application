@@ -30,26 +30,24 @@ public class PropertyController : ControllerBase
         var result = await _propertyService.CreateProperty(property);
         return StatusCode(result.StatusCode, result.Value);
     }
+
     [Authorize(Roles = "User,Admin")]
-    [HttpPost("GetOwnedProperties")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-    [Authorize(Roles = "User,Admin")]
     [HttpGet("GetOwnedProperties")]
-    public async Task<IActionResult> GetOwnedProperties(PropertyListingTypeEnum retivalOption)
+    public async Task<IActionResult> GetOwnedProperties(PropertyListingTypeEnum propertyListingType)
     {
-        var result = await _propertyService.GetOwnedProperties(retivalOption);
+        var result = await _propertyService.GetOwnedProperties(propertyListingType);
         return StatusCode(result.StatusCode, result.Value);
     }
 
     [Authorize(Roles = "User,Admin")]
-    [HttpGet("GetAllProperties")]
-    public async Task<IActionResult> GetAllProperties(PropertyListingTypeEnum retivalOption)
+    [HttpGet("GetAllApprovedProperties")]
+    public async Task<IActionResult> GetAllProperties(PropertyListingTypeEnum propertyListingType)
     {
-        var result = await _propertyService.GetAllProperties(retivalOption);
+        var result = await _propertyService.GetAllProperties(propertyListingType);
         return StatusCode(result.StatusCode, result.Value);
     }
 

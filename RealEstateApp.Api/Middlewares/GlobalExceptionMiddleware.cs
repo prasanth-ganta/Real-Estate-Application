@@ -29,7 +29,7 @@ public class GlobalExceptionMiddleware
         {
             error = new
             {
-                message = "An error occurred while processing your request.",
+                message = "An error occurred while processing request.",
                 details = exception.Message
             }
         };

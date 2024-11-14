@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
 using RealEstateApp.Api.Middlewares;
@@ -5,15 +6,8 @@ using RealEstateApp.Services.ServiceExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers().AddJsonOptions(options => 
-        {
-            options.JsonSerializerOptions.ReferenceHandler=ReferenceHandler.IgnoreCycles;
-        });
-
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers()
+    .AddJsonOptions(options => { options.JsonSerializerOptions.ReferenceHandler=ReferenceHandler.IgnoreCycles; } );
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen
 (
@@ -49,11 +43,26 @@ builder.Services.ConfigurationServices(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.Lifetime.ApplicationStarted.Register(() =>
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "http://localhost:5168/swagger",
+                UseShellExecute = true
+            });
+        }
+        catch(Exception exception)
+        {
+            logger.LogError(exception,"Faild to open Swagger");
+        }
+    });
 }
 
 app.UseHttpsRedirection();

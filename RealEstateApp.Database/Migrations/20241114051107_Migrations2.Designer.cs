@@ -12,8 +12,8 @@ using RealEstateApp.Database.Data;
 namespace RealEstateApp.Database.Migrations
 {
     [DbContext(typeof(RealEstateDbContext))]
-    [Migration("20241112090607_Migration1")]
-    partial class Migration1
+    [Migration("20241114051107_Migrations2")]
+    partial class Migrations2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,7 +49,9 @@ namespace RealEstateApp.Database.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -95,7 +97,9 @@ namespace RealEstateApp.Database.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -103,8 +107,9 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -114,10 +119,6 @@ namespace RealEstateApp.Database.Migrations
 
                     b.Property<int>("PropertyId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -143,7 +144,9 @@ namespace RealEstateApp.Database.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -186,13 +189,18 @@ namespace RealEstateApp.Database.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
+
+                    b.Property<int>("MessageVisibility")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
@@ -205,6 +213,9 @@ namespace RealEstateApp.Database.Migrations
 
                     b.Property<int>("SenderId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
@@ -227,7 +238,9 @@ namespace RealEstateApp.Database.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -266,9 +279,6 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<int>("PropertyTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int");
-
                     b.Property<int>("SubPropertyTypeId")
                         .HasColumnType("int");
 
@@ -299,7 +309,9 @@ namespace RealEstateApp.Database.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -344,14 +356,16 @@ namespace RealEstateApp.Database.Migrations
 
             modelBuilder.Entity("RealEstateApp.Database.Entities.PropertySubType", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -369,92 +383,92 @@ namespace RealEstateApp.Database.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ID");
 
                     b.ToTable("PropertySubTypes");
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            ID = 1,
                             IsActive = true,
                             Name = "BHK1"
                         },
                         new
                         {
-                            Id = 2,
+                            ID = 2,
                             IsActive = true,
                             Name = "BHK2"
                         },
                         new
                         {
-                            Id = 3,
+                            ID = 3,
                             IsActive = true,
                             Name = "BHK3"
                         },
                         new
                         {
-                            Id = 4,
+                            ID = 4,
                             IsActive = true,
                             Name = "BHK4"
                         },
                         new
                         {
-                            Id = 5,
+                            ID = 5,
                             IsActive = true,
                             Name = "Office"
                         },
                         new
                         {
-                            Id = 6,
+                            ID = 6,
                             IsActive = true,
                             Name = "Retail"
                         },
                         new
                         {
-                            Id = 7,
+                            ID = 7,
                             IsActive = true,
                             Name = "Industrial"
                         },
                         new
                         {
-                            Id = 8,
+                            ID = 8,
                             IsActive = true,
                             Name = "VacantLand"
                         },
                         new
                         {
-                            Id = 9,
+                            ID = 9,
                             IsActive = true,
                             Name = "AgricultureLand"
                         },
                         new
                         {
-                            Id = 10,
+                            ID = 10,
                             IsActive = true,
                             Name = "RecreationalLand"
                         },
                         new
                         {
-                            Id = 11,
+                            ID = 11,
                             IsActive = true,
                             Name = "Hotel"
                         },
                         new
                         {
-                            Id = 12,
+                            ID = 12,
                             IsActive = true,
                             Name = "Hospital"
                         },
                         new
                         {
-                            Id = 13,
+                            ID = 13,
                             IsActive = true,
                             Name = "School"
                         },
                         new
                         {
-                            Id = 14,
+                            ID = 14,
                             IsActive = true,
                             Name = "OldAgeHome"
                         });
@@ -469,7 +483,9 @@ namespace RealEstateApp.Database.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -533,7 +549,9 @@ namespace RealEstateApp.Database.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -579,7 +597,9 @@ namespace RealEstateApp.Database.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -625,7 +645,7 @@ namespace RealEstateApp.Database.Migrations
                             FirstName = "Abdul",
                             IsActive = true,
                             LastName = "Shaik",
-                            Password = "$2a$11$6WZ8OofhKJw6ISImqEuIreBfvDwNHN4XK98RCEsChQTnHT.QK/3Py",
+                            Password = "$2a$11$WmLpJimgrXazBBAjPCsbPObIQmLuDZxF/Y5q/YNvF1J/spI3PNs5y",
                             UserName = "abdul"
                         },
                         new
@@ -635,21 +655,23 @@ namespace RealEstateApp.Database.Migrations
                             FirstName = "Prashanth",
                             IsActive = true,
                             LastName = "Ganta",
-                            Password = "$2a$11$lo9AQGwlSrol8DJ9p4Jj..u6vu5Z9K3gGbGnoQl1LQZdkeNgZYfNy",
+                            Password = "$2a$11$gXGz41HqS46kcs8BS1q8CuXENfSnjDyY4RNApyjVt4IsS01R8xJtO",
                             UserName = "prashanth"
                         });
                 });
 
             modelBuilder.Entity("RoleUser", b =>
                 {
-                    b.Property<int>("RolesID")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UsersID")
+                    b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -660,24 +682,11 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("RolesID", "UsersID");
-
-                    b.ToTable("RoleUser");
-                });
-
-            modelBuilder.Entity("User Roles", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("User Roles");
+                    b.ToTable("RoleUser");
 
                     b.HasData(
                         new
@@ -798,7 +807,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Navigation("SubPropertyType");
                 });
 
-            modelBuilder.Entity("User Roles", b =>
+            modelBuilder.Entity("RoleUser", b =>
                 {
                     b.HasOne("RealEstateApp.Database.Entities.Role", null)
                         .WithMany()

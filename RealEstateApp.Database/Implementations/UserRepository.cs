@@ -26,9 +26,9 @@ public class UserRepository : IUserRepository
         return await _context.Roles.FindAsync(roleId);
     }
 
-    public async Task<User> GetUser (string userName)
+    public async Task<User> GetUser (string username)
     {
-        return await _context.Users.Include(roles => roles.Roles).FirstAsync(u => u.UserName == userName);
+        return await _context.Users.Include(roles => roles.Roles).FirstOrDefaultAsync(u => u.UserName == username);
     }
 
     public async Task<List<User>> GetAllUsers()
