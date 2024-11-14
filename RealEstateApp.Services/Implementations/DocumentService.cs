@@ -62,8 +62,15 @@ public class DocumentService : IDocumentService
         {
             int currentUserID = _loginUserDetailsService.GetCurrentUserID();
             string fileName = await _documentRepository.DeleteDocument(documentID, currentUserID);
-
-            await DeleteDocumentFile(fileName);
+            string path = Path.Combine(_configuration["UploadedFiles:Path"], "UploadedDocuments", fileName);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            else
+            {
+                _logger.LogWarning($"Physical file not found: {path}");
+            }
             return new Response(200, "Document deleted successfully");
         }
         catch (Exception ex)
@@ -103,26 +110,6 @@ public class DocumentService : IDocumentService
             }
 
             return fileName;
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-    }
-
-    private async Task DeleteDocumentFile(string fileName)
-    {
-        try
-        {
-            string path = Path.Combine(_configuration["UploadedFiles:Path"], "UploadedDocuments", fileName);
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
-            else
-            {
-                _logger.LogWarning($"Physical file not found: {path}");
-            }
         }
         catch (Exception ex)
         {

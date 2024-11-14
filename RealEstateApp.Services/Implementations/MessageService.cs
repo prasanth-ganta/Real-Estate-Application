@@ -24,16 +24,11 @@ public class MessageService : IMessageService
         _mapper = mapper;
     }
 
-    public async Task<Response> GetMessagesBetweenUsersAsync(int receiverID)
+    public async Task<Response> GetMessagesBetweenUsers(int receiverID)
     {
-        var userIDClaim = _httpContext.HttpContext.User.FindFirst("userID");
-        if (userIDClaim == null)
-        {
-            return new Response(400, "User ID not found in claims");
-        } 
-        int senderID = int.Parse(userIDClaim.Value);
+        int senderID = _loginUserDetailsService.GetCurrentUserID();
 
-        List<Message> messages = await _messageRepository.GetMessagesBetweenUsersAsync(senderID,receiverID);
+        List<Message> messages = await _messageRepository.GetMessagesBetweenUsers(senderID,receiverID);
         if(messages == null)
         {
             return new Response(404, "No Content Found");
@@ -43,15 +38,10 @@ public class MessageService : IMessageService
         return new Response(200,responseMessages);
     }
 
-    public async Task<Response> SendMessageAsync(MessageDTO sendMessage)
+    public async Task<Response> SendMessage(MessageDTO sendMessage)
     {
-        var userIDClaim = _httpContext.HttpContext.User.FindFirst("userID");
-        var userNameClaim = _httpContext.HttpContext.User.FindFirst(ClaimTypes.Name);
-        if (userIDClaim == null)
-        {
-            return new Response(400, "User ID not found in claims");
-        }
-        int senderID = int.Parse(userIDClaim.Value);
+        int senderID = _loginUserDetailsService.GetCurrentUserID();
+        string senderName = _loginUserDetailsService.GetCurrentUserName();
         Message message = new Message
         {
             SenderID = senderID,
@@ -61,17 +51,17 @@ public class MessageService : IMessageService
             IsRead = false
         };
         
-        bool isSent = await _messageRepository.SendMessageAsync(message,userNameClaim.Value);
+        bool isSent = await _messageRepository.SendMessage(message,senderName);
         if(isSent) return new Response(200,"Message Sent Successfully");
         return new Response(400,"Invalid Receiver ID");
     }
 
-    public async Task<Response> MarkMessageAsReadAsync(int messageID)
+    public async Task<Response> MarkMessageAsRead(int messageID)
     {
         try
         {
             int userID = _loginUserDetailsService.GetCurrentUserID();
-            bool isMarked = await _messageRepository.MarkMessageAsReadAsync(messageID, userID);
+            bool isMarked = await _messageRepository.MarkMessageAsRead(messageID, userID);
             
             return isMarked 
                 ? new Response(200, "Successfully Changed to Read")
@@ -83,12 +73,12 @@ public class MessageService : IMessageService
         }
     }
 
-    public async Task<Response> GetUnreadMessagesCountAsync()
+    public async Task<Response> GetUnreadMessagesCount()
     {
         try
         {
             int userID = _loginUserDetailsService.GetCurrentUserID();
-            int count = await _messageRepository.GetUnreadMessagesCountAsync(userID);
+            int count = await _messageRepository.GetUnreadMessagesCount(userID);
             
             return count == 0
                 ? new Response(204, new { Message = "All messages are Read", UnreadMessages = count })
@@ -104,12 +94,12 @@ public class MessageService : IMessageService
         }
     }
 
-    public async Task<Response> GetAllUnreadMessagesAsync()
+    public async Task<Response> GetAllUnreadMessages()
     {
         try
         {
             int userID = _loginUserDetailsService.GetCurrentUserID();
-            List<Message> messages = await _messageRepository.GetAllUnreadMessagesAsync(userID);
+            List<Message> messages = await _messageRepository.GetAllUnreadMessages(userID);
             
             if (messages == null)
             {
@@ -125,35 +115,38 @@ public class MessageService : IMessageService
         }
     }
 
-   public async Task<Response> DeleteMessageForEveryoneAsync(int messageId)
+   public async Task<Response> DeleteMessageForEveryone(int messageID)
     {
-        int userId = int.Parse(_httpContext.HttpContext.User.FindFirst("userId").Value);
-        bool result = await _messageRepository.DeleteMessageForEveroneAsync(messageId, userId);
-        if (result)
+        try
         {
-            return new Response(200, "Message deleted successfully.");
+            int userID = _loginUserDetailsService.GetCurrentUserID();
+            bool result = await _messageRepository.DeleteMessageForEverone(messageID, userID);
+            if (result)
+            {
+                return new Response(200, "Message deleted successfully.");
+            }
+            return new Response(400, "No Message to delete");
         }
-        catch (UnauthorizedAccessException)
+        catch (Exception)
         {
-            return new Response(400, "User ID not found in claims");
+            throw;
         }
     }
 
-    public async Task<Response> DeleteAllMessagesBetweenUsersAsync(int userID)
+    public async Task<Response> DeleteAllMessagesBetweenUsers(int userID)
     {
-        int currentUserId = int.Parse(_httpContext.HttpContext.User.FindFirst("userId").Value);
-        bool result = await _messageRepository.DeleteAllMessagesBetweenUsersAsync(currentUserId, userId);
+        int currentUserID = _loginUserDetailsService.GetCurrentUserID();
+        bool result = await _messageRepository.DeleteAllMessagesBetweenUsers(currentUserID, userID);
 
-            return result
-                ? new Response(200, "All messages between the users have been deleted successfully.")
-                : new Response(404, "No messages found between the users to delete.");
-        }
+        return result
+            ? new Response(200, "All messages between the users have been deleted successfully.")
+            : new Response(404, "No messages found between the users to delete.");
     }
 
-    public async Task<Response> DeleteMessageForMe(int messageId)
+    public async Task<Response> DeleteMessageForMe(int messageID)
     {
-        int userId = int.Parse(_httpContext.HttpContext.User.FindFirst("userId").Value);
-        bool result = await _messageRepository.DeleteMessageForMe(messageId, userId);
+        int userID = _loginUserDetailsService.GetCurrentUserID();
+        bool result = await _messageRepository.DeleteMessageForMe(messageID, userID);
         if (result)
         {
             return new Response(200, "Message deleted successfully.");

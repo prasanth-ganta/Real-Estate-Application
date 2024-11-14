@@ -69,7 +69,7 @@ public class PropertyController : ControllerBase
     }
 
     [Authorize(Roles = "User,Admin")]
-    [HttpDelete("{ID}")]
+    [HttpDelete("{propertyID}")]
     public async Task<IActionResult> DeleteProperty(int propertyID)
     {
         Response result = await _propertyService.SoftDeleteProperty(propertyID);
@@ -77,7 +77,7 @@ public class PropertyController : ControllerBase
 
     }
 
-    [HttpPut("UpdateProperty{ID}")]
+    [HttpPut("UpdateProperty{propertyID}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -27,8 +27,5 @@ public class MappingProfiles : Profile
         CreateMap<Document,DocumentResponseDTO>()
             .ForMember(dest => dest.File, opt => opt.MapFrom(src => src.FileName))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
-
-        CreateMap<PropertyResponseDTO,Property>().ReverseMap();
-        CreateMap<PropertyDTO,Property>().ReverseMap();
     }
 }

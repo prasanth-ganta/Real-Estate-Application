@@ -10,8 +10,8 @@ public interface IPropertyRepository
     public Task<List<Property>> GetOwnedProperties(int ownerID, PropertyListingTypeEnum propertyListingType);
     public Task<List<Property>> GetFavorites(int ownerID, PropertyListingTypeEnum propertyListingType);
     public Task<List<Property>> GetAllPendingProperties();
-    public Task<bool> ApproveProperty(int propertyId);
-    public Task<bool> SoftDeleteProperty(int propertyId, string value);
+    public Task<bool> ApproveProperty(int propertyID);
+    public Task<bool> SoftDeleteProperty(int propertyID, string value);
     Task<List<Property>> GetOwnedProperties(int ownerID);
     Task UpdatePropertyStatus(Property updatedProperty);
     

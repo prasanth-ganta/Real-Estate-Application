@@ -18,59 +18,59 @@ public class MessageController : ControllerBase
         _messageService = messageService;
     }
 
-    [HttpPost("send")]
+    [HttpPost("sendTo")]
     public async Task<IActionResult> SendMessage([FromBody] MessageDTO message)
     {
-        Response result = await _messageService.SendMessageAsync(message);
+        Response result = await _messageService.SendMessage(message);
         return StatusCode(result.StatusCode,result.Value);
     }
 
-    [HttpGet("between")]
-    public async Task<IActionResult> GetMessagesBetweenUsers(int userId)
+    [HttpGet("betweenUsers")]
+    public async Task<IActionResult> GetMessagesBetweenUsers(int userID)
     {
-        var result = await _messageService.GetMessagesBetweenUsersAsync(userId);
+        var result = await _messageService.GetMessagesBetweenUsers(userID);
         return StatusCode(result.StatusCode,result.Value);
     }
 
     [HttpPost("{messageID}/read")]
     public async Task<IActionResult> MarkMessageAsRead(int messageID)
     {
-        Response result = await _messageService.MarkMessageAsReadAsync(messageID);
+        Response result = await _messageService.MarkMessageAsRead(messageID);
         return StatusCode(result.StatusCode,result.Value);
     }
 
     [HttpGet("unread/count")]
     public async Task<IActionResult> GetUnreadMessagesCount()
     {
-        Response result = await _messageService.GetUnreadMessagesCountAsync();
+        Response result = await _messageService.GetUnreadMessagesCount();
         return StatusCode(result.StatusCode,result.Value);
     }
 
     [HttpGet("unread")]
     public async Task<IActionResult> GetAllUnreadMessages()
     {
-        Response result = await _messageService.GetAllUnreadMessagesAsync();
+        Response result = await _messageService.GetAllUnreadMessages();
         return StatusCode(result.StatusCode,result.Value);
     }
 
-    [HttpDelete("DeleteForEveryone/{messageId}")]
-    public async Task<IActionResult> DeleteMessageForEveryone(int messageId)
+    [HttpDelete("DeleteForEveryone/{messageID}")]
+    public async Task<IActionResult> DeleteMessageForEveryone(int messageID)
     {
-        var result = await _messageService.DeleteMessageForEveryoneAsync(messageId);
+        var result = await _messageService.DeleteMessageForEveryone(messageID);
         return StatusCode(result.StatusCode,result.Value);
     }
 
-    [HttpDelete("DeleteForMe/{messageId}")]
-    public async Task<IActionResult> DeleteMessageForMe(int messageId)
+    [HttpDelete("DeleteForMe/{messageID}")]
+    public async Task<IActionResult> DeleteMessageForMe(int messageID)
     {
-        var result = await _messageService.DeleteMessageForMe(messageId);
+        var result = await _messageService.DeleteMessageForMe(messageID);
         return StatusCode(result.StatusCode,result.Value);
     }
 
-    [HttpDelete("between")]
+    [HttpDelete("betweenUsers")]
     public async Task<IActionResult> DeleteAllMessagesBetweenUsers(int userID)
     {
-        Response result = await _messageService.DeleteAllMessagesBetweenUsersAsync(userID);
+        Response result = await _messageService.DeleteAllMessagesBetweenUsers(userID);
         return StatusCode(result.StatusCode,result.Value);
 
     }
