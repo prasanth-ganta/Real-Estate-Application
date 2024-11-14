@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RealEstateApp.Database.Migrations
 {
     /// <inheritdoc />
-    public partial class Migration1 : Migration
+    public partial class Migrations1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,7 +21,7 @@ namespace RealEstateApp.Database.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -43,7 +43,7 @@ namespace RealEstateApp.Database.Migrations
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GeoLocation = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -61,7 +61,7 @@ namespace RealEstateApp.Database.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -75,18 +75,18 @@ namespace RealEstateApp.Database.Migrations
                 name: "PropertySubTypes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PropertySubTypes", x => x.Id);
+                    table.PrimaryKey("PK_PropertySubTypes", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -97,7 +97,7 @@ namespace RealEstateApp.Database.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -115,7 +115,7 @@ namespace RealEstateApp.Database.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -131,7 +131,7 @@ namespace RealEstateApp.Database.Migrations
                 {
                     RolesID = table.Column<int>(type: "int", nullable: false),
                     UsersID = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -153,7 +153,7 @@ namespace RealEstateApp.Database.Migrations
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -171,9 +171,11 @@ namespace RealEstateApp.Database.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Chat = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
+                    MessageVisibility = table.Column<int>(type: "int", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SenderId = table.Column<int>(type: "int", nullable: false),
                     ReceiverId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -210,9 +212,8 @@ namespace RealEstateApp.Database.Migrations
                     OwnerId = table.Column<int>(type: "int", nullable: false),
                     LocationId = table.Column<int>(type: "int", nullable: false),
                     ApprovalStatusId = table.Column<int>(type: "int", nullable: false),
-                    StatusId = table.Column<int>(type: "int", nullable: false),
                     PropertyStatusId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -242,7 +243,7 @@ namespace RealEstateApp.Database.Migrations
                         name: "FK_Properties_PropertySubTypes_SubPropertyTypeId",
                         column: x => x.SubPropertyTypeId,
                         principalTable: "PropertySubTypes",
-                        principalColumn: "Id",
+                        principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Properties_PropertyTypes_PropertyTypeId",
@@ -288,11 +289,10 @@ namespace RealEstateApp.Database.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     PropertyId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETDATE()"),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -334,72 +334,72 @@ namespace RealEstateApp.Database.Migrations
 
             migrationBuilder.InsertData(
                 table: "ApprovalStatuses",
-                columns: new[] { "ID", "CreatedAt", "CreatedBy", "IsActive", "ModifiedAt", "ModifiedBy", "Status" },
+                columns: new[] { "ID", "CreatedBy", "IsActive", "ModifiedAt", "ModifiedBy", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, null, true, null, null, "Pending" },
-                    { 2, null, null, true, null, null, "Approved" }
+                    { 1, null, true, null, null, "Pending" },
+                    { 2, null, true, null, null, "Approved" }
                 });
 
             migrationBuilder.InsertData(
                 table: "PropertyStatuses",
-                columns: new[] { "ID", "CreatedAt", "CreatedBy", "IsActive", "ModifiedAt", "ModifiedBy", "Status" },
+                columns: new[] { "ID", "CreatedBy", "IsActive", "ModifiedAt", "ModifiedBy", "Status" },
                 values: new object[,]
                 {
-                    { 1, null, null, true, null, null, "Rent" },
-                    { 2, null, null, true, null, null, "Sell" },
-                    { 3, null, null, true, null, null, "Unavailable" }
+                    { 1, null, true, null, null, "Rent" },
+                    { 2, null, true, null, null, "Sell" },
+                    { 3, null, true, null, null, "Unavailable" }
                 });
 
             migrationBuilder.InsertData(
                 table: "PropertySubTypes",
-                columns: new[] { "Id", "CreatedAt", "CreatedBy", "IsActive", "ModifiedAt", "ModifiedBy", "Name" },
+                columns: new[] { "ID", "CreatedBy", "IsActive", "ModifiedAt", "ModifiedBy", "Name" },
                 values: new object[,]
                 {
-                    { 1, null, null, true, null, null, "BHK1" },
-                    { 2, null, null, true, null, null, "BHK2" },
-                    { 3, null, null, true, null, null, "BHK3" },
-                    { 4, null, null, true, null, null, "BHK4" },
-                    { 5, null, null, true, null, null, "Office" },
-                    { 6, null, null, true, null, null, "Retail" },
-                    { 7, null, null, true, null, null, "Industrial" },
-                    { 8, null, null, true, null, null, "VacantLand" },
-                    { 9, null, null, true, null, null, "AgricultureLand" },
-                    { 10, null, null, true, null, null, "RecreationalLand" },
-                    { 11, null, null, true, null, null, "Hotel" },
-                    { 12, null, null, true, null, null, "Hospital" },
-                    { 13, null, null, true, null, null, "School" },
-                    { 14, null, null, true, null, null, "OldAgeHome" }
+                    { 1, null, true, null, null, "BHK1" },
+                    { 2, null, true, null, null, "BHK2" },
+                    { 3, null, true, null, null, "BHK3" },
+                    { 4, null, true, null, null, "BHK4" },
+                    { 5, null, true, null, null, "Office" },
+                    { 6, null, true, null, null, "Retail" },
+                    { 7, null, true, null, null, "Industrial" },
+                    { 8, null, true, null, null, "VacantLand" },
+                    { 9, null, true, null, null, "AgricultureLand" },
+                    { 10, null, true, null, null, "RecreationalLand" },
+                    { 11, null, true, null, null, "Hotel" },
+                    { 12, null, true, null, null, "Hospital" },
+                    { 13, null, true, null, null, "School" },
+                    { 14, null, true, null, null, "OldAgeHome" }
                 });
 
             migrationBuilder.InsertData(
                 table: "PropertyTypes",
-                columns: new[] { "ID", "CreatedAt", "CreatedBy", "IsActive", "ModifiedAt", "ModifiedBy", "Name" },
+                columns: new[] { "ID", "CreatedBy", "IsActive", "ModifiedAt", "ModifiedBy", "Name" },
                 values: new object[,]
                 {
-                    { 1, null, null, true, null, null, "Residential" },
-                    { 2, null, null, true, null, null, "Commercial" },
-                    { 3, null, null, true, null, null, "Land" },
-                    { 4, null, null, true, null, null, "Special Purpose" },
-                    { 5, null, null, true, null, null, "Luxury" }
+                    { 1, null, true, null, null, "Residential" },
+                    { 2, null, true, null, null, "Commercial" },
+                    { 3, null, true, null, null, "Land" },
+                    { 4, null, true, null, null, "Special Purpose" },
+                    { 5, null, true, null, null, "Luxury" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Roles",
-                columns: new[] { "ID", "CreatedAt", "CreatedBy", "IsActive", "ModifiedAt", "ModifiedBy", "Name" },
+                columns: new[] { "ID", "CreatedBy", "IsActive", "ModifiedAt", "ModifiedBy", "Name" },
                 values: new object[,]
                 {
-                    { 1, null, null, true, null, null, "User" },
-                    { 2, null, null, true, null, null, "Admin" }
+                    { 1, null, true, null, null, "User" },
+                    { 2, null, true, null, null, "Admin" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "ID", "CreatedAt", "CreatedBy", "Email", "FirstName", "IsActive", "LastName", "ModifiedAt", "ModifiedBy", "Password", "UserName" },
+                columns: new[] { "ID", "CreatedBy", "Email", "FirstName", "IsActive", "LastName", "ModifiedAt", "ModifiedBy", "Password", "UserName" },
                 values: new object[,]
                 {
-                    { 1, null, null, "abdul@example.com", "Abdul", true, "Shaik", null, null, "$2a$11$6WZ8OofhKJw6ISImqEuIreBfvDwNHN4XK98RCEsChQTnHT.QK/3Py", "abdul" },
-                    { 2, null, null, "prashanth@example.com", "Prashanth", true, "Ganta", null, null, "$2a$11$lo9AQGwlSrol8DJ9p4Jj..u6vu5Z9K3gGbGnoQl1LQZdkeNgZYfNy", "prashanth" }
+                    { 1, null, "abdul@example.com", "Abdul", true, "Shaik", null, null, "$2a$11$w5sh9y.BfOQA8ApnZJxRyuB40iILJjYtB3JFX4w/H1esBD7npUKny", "abdul" },
+                    { 2, null, "prashanth@example.com", "Prashanth", true, "Ganta", null, null, "$2a$11$xnvvA4OfOtFFO.20S6EFUuqATrx9H/YW.QGDrR8OlCSgp4.4NazVi", "prashanth" }
                 });
 
             migrationBuilder.InsertData(

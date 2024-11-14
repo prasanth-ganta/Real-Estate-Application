@@ -1,10 +1,9 @@
-using System;
-
 namespace RealEstateApp.Services.DTOs.ResponseDTOs;
 
 public class MessageResponseDTO
 {
-    public string senderName { get; set; }
-    public string receiverName { get; set; }
-    public string content { get; set; }
+    public string SenderName { get; set; }
+    public string ReceiverName { get; set; }
+    public string Content { get; set; }
+    public DateTime TimeStamp { get; set; }
 }

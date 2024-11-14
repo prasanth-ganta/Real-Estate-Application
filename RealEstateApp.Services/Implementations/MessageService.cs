@@ -42,7 +42,7 @@ public class MessageService : IMessageService
         return new Response(200,responseMessages);
     }
 
-    public async Task<Response> SendMessageAsync(SendMessageRequestDTO sendMessage)
+    public async Task<Response> SendMessageAsync(MessageDTO sendMessage)
     {
         var userIdClaim = _httpContext.HttpContext.User.FindFirst("userId");
         var userNameClaim = _httpContext.HttpContext.User.FindFirst(ClaimTypes.Name);
@@ -103,10 +103,10 @@ public class MessageService : IMessageService
         return new Response(200,responseMessages);
     }
 
-   public async Task<Response> DeleteMessageAsync(int messageId)
+   public async Task<Response> DeleteMessageForEveryoneAsync(int messageId)
     {
         int userId = int.Parse(_httpContext.HttpContext.User.FindFirst("userId").Value);
-        bool result = await _messageRepository.DeleteMessageAsync(messageId, userId);
+        bool result = await _messageRepository.DeleteMessageForEveroneAsync(messageId, userId);
         if (result)
         {
             return new Response(200, "Message deleted successfully.");
@@ -120,7 +120,7 @@ public class MessageService : IMessageService
     public async Task<Response> DeleteAllMessagesBetweenUsersAsync(int userId)
     {
         int currentUserId = int.Parse(_httpContext.HttpContext.User.FindFirst("userId").Value);
-        bool result = await _messageRepository.DeleteAllMessagesBetweenUsersAsync(userId, currentUserId);
+        bool result = await _messageRepository.DeleteAllMessagesBetweenUsersAsync(currentUserId, userId);
 
         if (result)
         {
@@ -129,6 +129,20 @@ public class MessageService : IMessageService
         else
         {
             return new Response(404, "No messages found between the users to delete.");
+        }
+    }
+
+    public async Task<Response> DeleteMessageForMe(int messageId)
+    {
+        int userId = int.Parse(_httpContext.HttpContext.User.FindFirst("userId").Value);
+        bool result = await _messageRepository.DeleteMessageForMe(messageId, userId);
+        if (result)
+        {
+            return new Response(200, "Message deleted successfully.");
+        }
+        else
+        {
+            return new Response(404, "Message not found ");
         }
     }
 }

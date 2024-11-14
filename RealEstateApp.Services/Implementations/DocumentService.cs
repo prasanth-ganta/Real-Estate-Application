@@ -1,7 +1,5 @@
-using System.Windows.Markup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Client;
 using RealEstateApp.Database.Entities;
 using RealEstateApp.Database.Interfaces;
 using RealEstateApp.Services.DTOs.RequestDTOs;
@@ -47,7 +45,7 @@ public class DocumentService : IDocumentService
                 new Response(400," Max doc size can be 5MB ");
             }
             string fileName = Guid.NewGuid().ToString()+documentExtension;
-            string path = Path.Combine(_configuration["UploadedFiles:Path"],"UploadedDocuments");
+            string path = _configuration["UploadedFiles:Path"];
             using (FileStream stream = new FileStream(Path.Combine(path,fileName),FileMode.Create))
             {
                 document.uploadDocument.CopyTo(stream);

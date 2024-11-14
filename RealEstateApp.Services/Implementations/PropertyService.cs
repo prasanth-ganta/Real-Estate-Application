@@ -57,7 +57,7 @@ public class PropertyService : IPropertyService
         {
             if (property == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException("Can't send invalid property ");
             }
 
             var propertyLocation = new Location
@@ -85,15 +85,10 @@ public class PropertyService : IPropertyService
             await _propertyRepository.AddProperty(newProperty);
             return new Response(200, "Property Created Successfully");
         }
-        catch (UnauthorizedAccessException ex)
-        {
-            _logger.LogError($"Authorization error while creating property: {ex.Message}");
-            throw;
-        }
         catch (Exception ex)
         {
             _logger.LogError($"Error occurred while creating property: {ex.Message}");
-            throw new InvalidOperationException("Failed to create property", ex);
+            throw new Exception("Failed to create property", ex);
         }
     }
 
@@ -108,9 +103,9 @@ public class PropertyService : IPropertyService
         return new Response(200, responseProperty);
     }
 
-    public async Task<Response> GetAllProperties(PropertyListingTypeEnum retivalOption)
+    public async Task<Response> GetAllProperties(PropertyListingTypeEnum propertyListingType)
     {
-        var result = await _propertyRepository.GetAllProperties(retivalOption);
+        var result = await _propertyRepository.GetAllProperties(propertyListingType);
         List<PropertyResponseDTO> responseProperty = new List<PropertyResponseDTO>();
         foreach (var property in result)
         {
@@ -119,11 +114,11 @@ public class PropertyService : IPropertyService
         return new Response(200, responseProperty);
     }
 
-    public async Task<Response> GetOwnedProperties(PropertyListingTypeEnum retivalOption)
+    public async Task<Response> GetOwnedProperties(PropertyListingTypeEnum propertyListingType)
     {
-        var result = await _propertyRepository.GetOwnedProperties(int.Parse(_httpContextAccessor.HttpContext.User.FindFirst("userId").Value), retivalOption);
+        var ownedProperties = await _propertyRepository.GetOwnedProperties(int.Parse(_httpContextAccessor.HttpContext.User.FindFirst("userId").Value), propertyListingType);
         List<PropertyResponseDTO> responseProperty = new List<PropertyResponseDTO>();
-        foreach (var property in result)
+        foreach (var property in ownedProperties)
         {
             responseProperty.Add(MappingProperty(property));
         }
@@ -141,7 +136,7 @@ public class PropertyService : IPropertyService
     private PropertyResponseDTO MappingProperty(Property property)
     {
 
-        var propertyLocation = new LocationDTO
+        LocationDTO propertyLocation = new LocationDTO
         {
             ZipCode = property.Location.ZipCode,
             City = property.Location.City,
@@ -149,8 +144,8 @@ public class PropertyService : IPropertyService
             Country = property.Location.Country,
             GeoLocation = property.Location.GeoLocation
         };
-
-        var responseProperty = new PropertyResponseDTO
+        List<DocumentResponseDTO> documents = _mapper.Map<List<DocumentResponseDTO>>(property.Documents);
+        PropertyResponseDTO responseProperty = new PropertyResponseDTO
         {
             Name = property.Name,
             Description = property.Description,
@@ -160,7 +155,9 @@ public class PropertyService : IPropertyService
             PropertyStatus = property.PropertyStatus.Status,
             ApprovalStatus = property.ApprovalStatus.Status,
             Location = propertyLocation,
-            OwnerName = property.Owner.FullName
+            OwnerName = property.Owner.FullName,
+            Documents = documents
+            
         };
         return responseProperty;
     }
