@@ -14,10 +14,18 @@ public class PropertyRepository : IPropertyRepository
         _realEstateDbContext = realEstateDbContext;
     }
 
-    public async Task AddProperty(Property newProperty, string username)
+    public async Task<bool> AddProperty(Property newProperty, string username)
     {
-        await _realEstateDbContext.Properties.AddAsync(newProperty);
-        await _realEstateDbContext.SaveChangesWithUserName(username);
+        try
+        {
+            await _realEstateDbContext.Properties.AddAsync(newProperty);
+            await _realEstateDbContext.SaveChangesWithUserName(username);
+            return true;
+        }
+        catch(Exception exception)
+        {
+            throw;
+        }
     }
 
     public async Task<List<Property>> GetAllPendingProperties()
@@ -26,6 +34,22 @@ public class PropertyRepository : IPropertyRepository
             .Where(p => p.ApprovalStatusID == (int)ApprovalStatusEnum.Pending);
 
         return await propertyList.ToListAsync();
+    }
+
+    public async Task<bool> ApproveProperty(int propertyID)
+    {
+        Property property = await LoadAllProperties().FirstOrDefaultAsync(p => p.ID == propertyID);
+            
+        if(property == null || property.ApprovalStatusID == (int)ApprovalStatusEnum.Approved)
+        {
+            return false;
+        }
+        else
+        {
+            property.ApprovalStatusID = (int)ApprovalStatusEnum.Approved;
+            await _realEstateDbContext.SaveChangesAsync();
+            return true;
+        }
     }
 
     public async Task<List<Property>> GetAllProperties(PropertyListingTypeEnum propertyListingType)
@@ -78,11 +102,6 @@ public class PropertyRepository : IPropertyRepository
             .Where(p => p.IsActive == true);
         return propertyList;
     }
-    public async Task AddProperty(Property newProperty)
-    {
-        await _realEstateDbContext.Properties.AddAsync(newProperty);
-        await _realEstateDbContext.SaveChangesAsync();
-    }
     public async Task<List<Property>> GetOwnedProperties(int ownerID)
     {
         return await _realEstateDbContext.Properties.Include(p => p.Owner).Include(p => p.Location).Where(p => p.OwnerID == ownerID).ToListAsync();
@@ -93,103 +112,6 @@ public class PropertyRepository : IPropertyRepository
     {
         _realEstateDbContext.Properties.Update(updatedProperty);
         await _realEstateDbContext.SaveChangesAsync();
-    }
-
-    //// Buy Methods Implementation
-    public async Task<IEnumerable<Property>> GetPropertiesForBuyByLocation(string city, string state)
-    {
-        return await _realEstateDbContext.Properties
-            .Include(p => p.Location)
-            .Include(p => p.PropertyType)
-            .Include(p => p.SubPropertyType)
-            .Include(p => p.PropertyStatus)
-            .Where(p => p.PropertyStatus.Status == "Sell" &&
-                   p.Location.City.Contains(city) &&
-                   p.Location.State.Contains(state) &&
-                   p.ApprovalStatus.Status == "Approved")
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Property>> GetPropertiesForBuyByPincode(int zipCode)
-    {
-        return await _realEstateDbContext.Properties
-            .Include(p => p.Location)
-            .Include(p => p.PropertyType)
-            .Include(p => p.SubPropertyType)
-            .Include(p => p.PropertyStatus)
-            .Where(p => p.PropertyStatus.Status == "Sell" &&
-                   p.Location.ZipCode == zipCode &&
-                   p.ApprovalStatus.Status == "Approved")
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Property>> GetPropertiesForBuyByPriceRange(double minPrice, double maxPrice)
-    {
-        return await _realEstateDbContext.Properties
-            .Include(p => p.Location)
-            .Include(p => p.PropertyType)
-            .Include(p => p.SubPropertyType)
-            .Include(p => p.PropertyStatus)
-            .Where(p => p.PropertyStatus.Status == "Sell" &&
-                   p.Price >= minPrice &&
-                   p.Price <= maxPrice &&
-                   p.ApprovalStatus.Status == "Approved")
-            .ToListAsync();
-    }
-
-    //// Rent Methods Implementation
-    public async Task<IEnumerable<Property>> GetPropertiesForRentByLocation(string city, string state)
-    {
-        return await _realEstateDbContext.Properties
-            .Include(p => p.Location)
-            .Include(p => p.PropertyType)
-            .Include(p => p.SubPropertyType)
-            .Include(p => p.PropertyStatus)
-            .Where(p => p.PropertyStatus.Status == "Rent" &&
-                   p.Location.City.Contains(city) &&
-                   p.Location.State.Contains(state) &&
-                   p.ApprovalStatus.Status == "Approved")
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Property>> GetPropertiesForRentByPincode(int zipCode)
-    {
-        return await _realEstateDbContext.Properties
-            .Include(p => p.Location)
-            .Include(p => p.PropertyType)
-            .Include(p => p.SubPropertyType)
-            .Include(p => p.PropertyStatus)
-            .Where(p => p.PropertyStatus.Status == "Rent" &&
-                   p.Location.ZipCode == zipCode &&
-                   p.ApprovalStatus.Status == "Approved")
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Property>> GetPropertiesForRentByPriceRange(double minPrice, double maxPrice)
-    {
-        return await _realEstateDbContext.Properties
-            .Include(p => p.Location)
-            .Include(p => p.PropertyType)
-            .Include(p => p.SubPropertyType)
-            .Include(p => p.PropertyStatus)
-            .Where(p => p.PropertyStatus.Status == "Rent" &&
-                   p.Price >= minPrice &&
-                   p.Price <= maxPrice &&
-                   p.ApprovalStatus.Status == "Approved")
-            .ToListAsync();
-    }
-
-    public async Task<IEnumerable<Property>> GetPropertiesForRentByName(string propertyName)
-    {
-        return await _realEstateDbContext.Properties
-            .Include(p => p.Location)
-            .Include(p => p.PropertyType)
-            .Include(p => p.SubPropertyType)
-            .Include(p => p.PropertyStatus)
-            .Where(p => p.PropertyStatus.Status == "Rent" &&
-                   p.Name.Contains(propertyName) &&
-                   p.ApprovalStatus.Status == "Approved")
-            .ToListAsync();
     }
 
     public async Task<bool> DeleteDocument(int documentID, int propertyID)
@@ -269,4 +191,50 @@ public class PropertyRepository : IPropertyRepository
         return await propertyList.ToListAsync();
 
     }
+
+    public async Task<List<Property>> GetPropertiesByLocation(string city, string state, PropertyListingTypeEnum propertyListingType)
+    {
+        IQueryable<Property> propertyList = LoadAllProperties()
+            .Where(p => p.ApprovalStatusID == (int)ApprovalStatusEnum.Approved &&
+                   p.Location.City.ToLower() == city.ToLower() &&
+                   p.Location.State.ToLower() == state.ToLower());
+
+        if (propertyListingType != PropertyListingTypeEnum.All)
+        {
+            propertyList = propertyList.Where(p => p.PropertyStatusID == (int)propertyListingType);
+        }
+
+        return await propertyList.ToListAsync();
+    }
+
+    public async Task<List<Property>> GetPropertiesByPincode(int zipCode, PropertyListingTypeEnum propertyListingType)
+    {
+        IQueryable<Property> propertyList = LoadAllProperties()
+            .Where(p => p.ApprovalStatusID == (int)ApprovalStatusEnum.Approved &&
+                   p.Location.ZipCode == zipCode);
+
+        if (propertyListingType != PropertyListingTypeEnum.All)
+        {
+            propertyList = propertyList.Where(p => p.PropertyStatusID == (int)propertyListingType);
+        }
+
+        return await propertyList.ToListAsync();
+    }
+
+    public async Task<List<Property>> GetPropertiesByPriceRange(double minPrice, double maxPrice, PropertyListingTypeEnum propertyListingType)
+    {
+        IQueryable<Property> propertyList = LoadAllProperties()
+            .Where(p => p.ApprovalStatusID == (int)ApprovalStatusEnum.Approved &&
+                   p.Price >= minPrice &&
+                   p.Price <= maxPrice);
+
+        if (propertyListingType != PropertyListingTypeEnum.All)
+        {
+            propertyList = propertyList.Where(p => p.PropertyStatusID == (int)propertyListingType);
+        }
+
+        return await propertyList.ToListAsync();
+    }
+
+
 }

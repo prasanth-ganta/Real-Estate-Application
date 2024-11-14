@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.DTOs.ResponseDTOs;
 using RealEstateApp.Services.Interfaces;
+using RealEstateApp.Services.ResponseType;
 using RealEstateApp.Utility.Enumerations;
 
 namespace RealEstateApp.Api.Controllers;
@@ -27,7 +28,7 @@ public class PropertyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CreateProperty([FromForm] PropertyDTO property)
     {
-        var result = await _propertyService.CreateProperty(property);
+        Response result = await _propertyService.CreateProperty(property);
         return StatusCode(result.StatusCode, result.Value);
     }
 
@@ -39,7 +40,7 @@ public class PropertyController : ControllerBase
     [HttpGet("GetOwnedProperties")]
     public async Task<IActionResult> GetOwnedProperties(PropertyListingTypeEnum propertyListingType)
     {
-        var result = await _propertyService.GetOwnedProperties(propertyListingType);
+        Response result = await _propertyService.GetOwnedProperties(propertyListingType);
         return StatusCode(result.StatusCode, result.Value);
     }
 
@@ -47,7 +48,7 @@ public class PropertyController : ControllerBase
     [HttpGet("GetAllProperties")]
     public async Task<IActionResult> GetAllProperties(PropertyListingTypeEnum propertyListingType)
     {
-        var result = await _propertyService.GetAllProperties(propertyListingType);
+        Response result = await _propertyService.GetAllProperties(propertyListingType);
         return StatusCode(result.StatusCode, result.Value);
     }
 
@@ -55,15 +56,23 @@ public class PropertyController : ControllerBase
     [HttpGet("Admin/GetAllPendingProperties")]
     public async Task<IActionResult> GetAllPendingProperties()
     {
-        var result = await _propertyService.GetAllPendingProperties();
+        Response result = await _propertyService.GetAllPendingProperties();
+        return StatusCode(result.StatusCode, result.Value);
+    }
+
+    [HttpPut("approve")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ApproveProperty(int propertyID)
+    {
+        Response result = await _propertyService.ApproveProperty(propertyID);
         return StatusCode(result.StatusCode, result.Value);
     }
 
     [Authorize(Roles = "User,Admin")]
     [HttpDelete("{ID}")]
-    public async Task<IActionResult> DeleteProperty(int ID)
+    public async Task<IActionResult> DeleteProperty(int propertyID)
     {
-        var result = await _propertyService.SoftDeleteProperty(ID);
+        Response result = await _propertyService.SoftDeleteProperty(propertyID);
         return StatusCode(result.StatusCode, result.Value);
 
     }
@@ -73,88 +82,10 @@ public class PropertyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UpdatePropertyStatus(int ID, PropertyListingTypeEnum propertyListingType)
+    public async Task<IActionResult> UpdatePropertyStatus(int propertyID, PropertyListingTypeEnum propertyListingType)
     {
-        var result = await _propertyService.UpdatePropertyStatus(ID, propertyListingType);
+        Response result = await _propertyService.UpdatePropertyStatus(propertyID, propertyListingType);
         return StatusCode(result.StatusCode, result.Value);
-    }
-
-    [HttpGet("buy/by-location")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> SearchPropertiesForBuyByLocation(
-        [FromQuery] string city,
-        [FromQuery] string state)
-    {
-        IEnumerable<PropertyResponseDTO> properties = await _propertyService.SearchPropertiesForBuyByLocation(city, state);
-        return Ok(properties);
-    }
-
-    [HttpGet("buy/by-pincode")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> SearchPropertiesForBuyByPincode([FromQuery] int zipCode)
-    {
-        IEnumerable<PropertyResponseDTO> properties = await _propertyService.SearchPropertiesForBuyByPincode(zipCode);
-        return Ok(properties);
-    }
-
-    [HttpGet("buy/by-price-range")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> SearchPropertiesForBuyByPriceRange(
-        [FromQuery] double minPrice,
-        [FromQuery] double maxPrice)
-    {
-        IEnumerable<PropertyResponseDTO> properties = await _propertyService.SearchPropertiesForBuyByPriceRange(minPrice, maxPrice);
-        return Ok(properties);
-    }
-
-    [HttpGet("rent/by-location")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> SearchPropertiesForRentByLocation(
-        [FromQuery] string city,
-        [FromQuery] string state)
-    {
-        IEnumerable<PropertyResponseDTO> properties = await _propertyService.SearchPropertiesForRentByLocation(city, state);
-        return Ok(properties);
-    }
-
-    [HttpGet("rent/by-pincode")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> SearchPropertiesForRentByPincode([FromQuery] int zipCode)
-    {
-        var properties = await _propertyService.SearchPropertiesForRentByPincode(zipCode);
-        return Ok(properties);
-    }
-
-    [HttpGet("rent/by-price-range")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> SearchPropertiesForRentByPriceRange(
-        [FromQuery] double minPrice,
-        [FromQuery] double maxPrice)
-    {
-        var properties = await _propertyService.SearchPropertiesForRentByPriceRange(minPrice, maxPrice);
-        return Ok(properties);
-    }
-
-    [HttpGet("rent/by-name")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> SearchPropertiesForRentByName([FromQuery] string propertyName)
-    {
-        IEnumerable<PropertyResponseDTO> properties = await _propertyService.SearchPropertiesForRentByName(propertyName);
-        return Ok(properties);
     }
 
     [HttpPost("addFavourites/{propertyID}")]
@@ -164,7 +95,7 @@ public class PropertyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AddToFavorites(int propertyID)
     {
-        var result = await _propertyService.AddToFavorites(propertyID);
+        Response result = await _propertyService.AddToFavorites(propertyID);
         return StatusCode(result.StatusCode, result);
     }
 
@@ -174,14 +105,47 @@ public class PropertyController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> RemoveFromFavorites(int propertyID)
     {
-        var result = await _propertyService.RemoveFromFavorites(propertyID);
+        Response result = await _propertyService.RemoveFromFavorites(propertyID);
         return StatusCode(result.StatusCode, result);
     }
 
     [HttpGet("favorites")]
     public async Task<IActionResult> GetFavorites(PropertyListingTypeEnum propertyListingType)
     {
-        var result = await _propertyService.GetFavorites(propertyListingType);
+        Response result = await _propertyService.GetFavorites(propertyListingType);
         return StatusCode(result.StatusCode, result);
+    }
+
+    [HttpGet("search/location")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> SearchPropertiesByLocation([FromQuery] string city, [FromQuery] string state, [FromQuery] PropertyListingTypeEnum propertyListingType)
+    {
+        Response result = await _propertyService.SearchPropertiesByLocation(city, state, propertyListingType);
+        return StatusCode(result.StatusCode, result.Value);
+    }
+
+    [HttpGet("search/pincode")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> SearchPropertiesByPincode([FromQuery] int zipCode, [FromQuery] PropertyListingTypeEnum propertyListingType)
+    {
+        Response result = await _propertyService.SearchPropertiesByPincode(zipCode, propertyListingType);
+        return StatusCode(result.StatusCode, result.Value);
+    }
+
+    [HttpGet("search/price-range")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> SearchPropertiesByPriceRange([FromQuery] double minPrice, [FromQuery] double maxPrice, [FromQuery] PropertyListingTypeEnum propertyListingType)
+    {
+        Response result = await _propertyService.SearchPropertiesByPriceRange(minPrice, maxPrice, propertyListingType);
+        return StatusCode(result.StatusCode, result.Value);
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.Interfaces;
+using RealEstateApp.Services.ResponseType;
 
 namespace RealEstateApp.Api.Controllers; 
 
@@ -25,7 +26,7 @@ public class DocumentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AddDocument([FromForm] DocumentDTO document, int propertyID)
     {
-        var result = await _documentService.AddDocument(document, propertyID);
+        Response result = await _documentService.AddDocument(document, propertyID);
         return StatusCode(result.StatusCode, result);
     }
 
@@ -39,7 +40,7 @@ public class DocumentController : ControllerBase
     public async Task<IActionResult> DeleteDocument(int documentID)
     {
 
-        var result = await _documentService.DeleteDocument(documentID);
+        Response result = await _documentService.DeleteDocument(documentID);
         return StatusCode(result.StatusCode, result);
     }
 }

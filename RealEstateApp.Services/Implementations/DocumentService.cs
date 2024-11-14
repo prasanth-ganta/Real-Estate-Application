@@ -1,7 +1,5 @@
-using System.Windows.Markup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Client;
 using RealEstateApp.Database.Entities;
 using RealEstateApp.Database.Interfaces;
 using RealEstateApp.Services.DTOs.RequestDTOs;
@@ -9,49 +7,37 @@ using RealEstateApp.Services.Interfaces;
 using RealEstateApp.Services.ResponseType;
 
 namespace RealEstateApp.Services.Implementations;
-
 public class DocumentService : IDocumentService
 {
     private readonly IDocumentRepository _documentRepository;
     private readonly ILoginUserDetailsService _loginUserDetailsService;
     private readonly ILogger<DocumentService> _logger;
     private readonly IConfiguration _configuration;
-    public DocumentService(IDocumentRepository documentRepository, ILoginUserDetailsService loginUserDetailsService, ILogger<DocumentService> logger, IConfiguration configuration)
+    private const int MaxFileSizeInBytes = 5 * 1024 * 1024; // 5MB
+
+    public DocumentService(IDocumentRepository documentRepository,
+        ILoginUserDetailsService loginUserDetailsService,
+        ILogger<DocumentService> logger,
+        IConfiguration configuration)
     {
         _documentRepository = documentRepository;
         _loginUserDetailsService = loginUserDetailsService;
         _logger = logger;
         _configuration = configuration;
     }
+
     public async Task<Response> AddDocument(DocumentDTO document, int propertyID)
     {
         try
         {
             if (document == null)
             {
-                throw new ArgumentNullException(nameof(document));
+                throw new Exception("Document cannot be null");
             }
 
-            var currentUserID = _loginUserDetailsService.GetCurrentUserID();
+            ValidateDocument(document);
 
-            List<string> validExtensions = new List<string>() { ".jpg", ".png", "pdf" };
-
-            string documentExtension = Path.GetExtension(document.uploadDocument.FileName);
-            if (!validExtensions.Contains(documentExtension))
-            {
-                new Response(400, "Invalid File Type");
-            }
-            long documentSize = document.uploadDocument.Length;
-            if (documentSize > 5 * 1024 * 1024)
-            {
-                new Response(400, " Max doc size can be 5MB ");
-            }
-            string fileName = Guid.NewGuid().ToString() + documentExtension;
-            string path = Path.Combine(_configuration["UploadedFiles:Path"], "UploadedDocuments");
-            using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
-            {
-                document.uploadDocument.CopyTo(stream);
-            }
+            string fileName = await SaveDocumentFile(document);
 
             Document configuredDocument = new Document
             {
@@ -63,35 +49,85 @@ public class DocumentService : IDocumentService
             await _documentRepository.AddDocument(configuredDocument);
             return new Response(201, "Document added successfully");
         }
-        catch (UnauthorizedAccessException ex)
-        {
-            _logger.LogWarning($"Unauthorized document addition attempt: {ex.Message}");
-            throw;
-        }
         catch (Exception ex)
         {
-            _logger.LogError($"Error adding document to property {propertyID}: {ex.Message}");
-            throw new InvalidOperationException("Failed to add document to property", ex);
+            _logger.LogError($"Failed to process document: {ex.Message}", ex);
+            return new Response(500, "Failed to process document");
         }
     }
 
     public async Task<Response> DeleteDocument(int documentID)
     {
-        var currentUserID = _loginUserDetailsService.GetCurrentUserID();
-
-        var fileName = await _documentRepository.DeleteDocument(documentID,currentUserID);
-        string path = Path.Combine(_configuration["UploadedFiles:Path"], "UploadedDocuments", fileName);
-        
-        if (File.Exists(path))
+        try
         {
-            File.Delete(path);
+            int currentUserID = _loginUserDetailsService.GetCurrentUserID();
+            string fileName = await _documentRepository.DeleteDocument(documentID, currentUserID);
+
+            await DeleteDocumentFile(fileName);
+            return new Response(200, "Document deleted successfully");
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogWarning($"Physical file not found for document {documentID}: {path}");
+            _logger.LogError($"Failed to delete document: {ex.Message}", ex);
+            return new Response(500, "Failed to delete document");
         }
-
-        return new Response(200, "Document deleted successfully");
-
     }
+
+    private void ValidateDocument(DocumentDTO document)
+    {
+        List<string> validExtensions = new List<string>() { ".jpg", ".png", ".pdf" };
+        string documentExtension = Path.GetExtension(document.uploadDocument.FileName).ToLower();
+
+        if (!validExtensions.Contains(documentExtension))
+        {
+            throw new Exception($"Invalid file type: {documentExtension}");
+        }
+
+        if (document.uploadDocument.Length > MaxFileSizeInBytes)
+        {
+            throw new Exception($"File size exceeds maximum limit of 5MB");
+        }
+    }
+
+    private async Task<string> SaveDocumentFile(DocumentDTO document)
+    {
+        try
+        {
+            string documentExtension = Path.GetExtension(document.uploadDocument.FileName);
+            string fileName = Guid.NewGuid().ToString() + documentExtension;
+            string path = Path.Combine(_configuration["UploadedFiles:Path"], "UploadedDocuments", fileName);
+
+            using (FileStream stream = new FileStream(path, FileMode.Create))
+            {
+                await document.uploadDocument.CopyToAsync(stream);
+            }
+
+            return fileName;
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
+    private async Task DeleteDocumentFile(string fileName)
+    {
+        try
+        {
+            string path = Path.Combine(_configuration["UploadedFiles:Path"], "UploadedDocuments", fileName);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+            else
+            {
+                _logger.LogWarning($"Physical file not found: {path}");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
 }
