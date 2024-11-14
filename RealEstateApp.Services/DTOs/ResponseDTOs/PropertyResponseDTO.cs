@@ -13,5 +13,5 @@ public class PropertyResponseDTO
     public string OwnerName { get; set; }
     public LocationDTO Location { get; set; }
     public string PropertyStatus { get; set; }
-    public List<DocumentDTO> documents  { get; set; }
+    public List<DocumentResponseDTO> Documents  { get; set; }
 }

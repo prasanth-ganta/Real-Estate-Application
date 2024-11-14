@@ -28,8 +28,9 @@ public class MessageRepository : IMessageRepository
         return await _context.Messages
             .Include(m => m.Sender)
             .Include(m => m.Receiver)
-            .Where(m => (m.SenderID == user1ID && m.ReceiverID == user2ID) ||
-                        (m.SenderID == user2ID && m.ReceiverID == user1ID))
+            .Where(m => ((m.SenderId == user1Id && m.ReceiverId == user2Id) ||
+                        (m.SenderId == user2Id && m.ReceiverId == user1Id)) &&
+                        (m.MessageVisibility == 0 || m.MessageVisibility == user1Id))
             .OrderBy(m => m.Timestamp)
             .ToListAsync();
     }
@@ -37,7 +38,8 @@ public class MessageRepository : IMessageRepository
     public async Task<bool> MarkMessageAsReadAsync(int messageID,int receiverID)
     {
         var message = await _context.Messages
-            .FirstOrDefaultAsync(m => m.ID == messageID && m.ReceiverID == receiverID);
+            .FirstOrDefaultAsync(m => m.ID == messageId && m.ReceiverId == receiverId && 
+                            (m.MessageVisibility == 0 || m.MessageVisibility == receiverId));
 
         if (message != null)
         {
@@ -55,7 +57,8 @@ public class MessageRepository : IMessageRepository
             throw new NullReferenceException("No such user exist");
         }
         return await _context.Messages
-            .Where(m => m.ReceiverID == userID && !m.IsRead)
+            .Where(m => m.ReceiverId == userId && !m.IsRead &&
+                        (m.MessageVisibility == 0 || m.MessageVisibility != userId))
             .CountAsync();
         
     }
@@ -67,38 +70,85 @@ public class MessageRepository : IMessageRepository
             throw new NullReferenceException("No such user exist");
         }
         return await _context.Messages.Include(m=>m.Sender)
-            .Where(m => m.ReceiverID == userID && !m.IsRead)
+            .Where(m => m.ReceiverId == userId && !m.IsRead &&
+                        (m.MessageVisibility == 0 || m.MessageVisibility != userId))
             .ToListAsync();
     }
 
-
-    public async Task<bool> DeleteMessageAsync(int messageID, int userID)
+    public async Task<bool> DeleteMessageForEveroneAsync(int messageId, int userId)
     {
         var message = await _context.Messages
             .FirstOrDefaultAsync(m => m.ID == messageID && m.SenderID == userID);
 
         if (message != null)
         {
-            _context.Messages.Remove(message);
+            message.MessageVisibility = -1;
             await _context.SaveChangesAsync();
             return true; 
         }
         return false; 
     }
-    public async Task<bool> DeleteAllMessagesBetweenUsersAsync(int user1ID, int user2ID)
-    {
-        var messages = _context.Messages
-            .Where(m => (m.SenderID == user1ID && m.ReceiverID == user2ID) ||
-                        (m.SenderID == user2ID && m.ReceiverID == user1ID))
-            .ToList();
 
-        if (messages.Any())
+    public async Task<bool> DeleteAllMessagesBetweenUsersAsync(int user1Id, int user2Id)
+    {
+        var messages = await _context.Messages
+            .Where(m => (m.SenderId == user1Id && m.ReceiverId == user2Id) ||
+                        (m.SenderId == user2Id && m.ReceiverId == user1Id))
+            .ToListAsync();
+
+        if (!messages.Any() )
         {
-            _context.Messages.RemoveRange(messages);
+            throw new InvalidOperationException("Nothing to clear.");
+        }
+
+        bool visibilityChanged = false;
+
+        foreach (var message in messages)
+        {
+            if (message.MessageVisibility > 0)
+            {
+                message.MessageVisibility = -1;
+                visibilityChanged = true;
+            }
+            else if (message.MessageVisibility == -1)
+            {
+                throw new InvalidOperationException("Nothing to clear.");
+            }
+            else if (message.MessageVisibility == 0)
+            {
+                message.MessageVisibility = user2Id;
+                visibilityChanged = true;
+            }
+        }
+
+        if (visibilityChanged)
+        {
             await _context.SaveChangesAsync();
             return true;
         }
 
         return false;
+    }
+    public async Task<bool> DeleteMessageForMe(int messageId, int userId)
+    {
+        var message = await _context.Messages
+            .FirstOrDefaultAsync(m => m.ID == messageId && (m.SenderId == userId || m.ReceiverId == userId));
+
+        if (message != null)
+        {
+            int otherUserId = message.SenderId;
+            if(message.ReceiverId == userId && message.SenderId == userId)
+            {
+                otherUserId = -1;
+            }
+            if(message.ReceiverId == userId)
+            {
+                otherUserId = message.SenderId;
+            }
+            message.MessageVisibility = otherUserId;
+            await _context.SaveChangesAsync();
+            return true; 
+        }
+        return false; 
     }
 }

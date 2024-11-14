@@ -196,6 +196,9 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
+                    b.Property<int>("MessageVisibility")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
 
@@ -273,7 +276,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<int>("PropertyTypeID")
                         .HasColumnType("int");
 
-                    b.Property<int>("SubPropertyTypeID")
+                    b.Property<int>("SubPropertyTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -639,7 +642,7 @@ namespace RealEstateApp.Database.Migrations
                             FirstName = "Abdul",
                             IsActive = true,
                             LastName = "Shaik",
-                            Password = "$2a$11$9MXf7CpycH.NeSkAzRG9o.Rt5NJF8ie3O6O8.m0AHERSpQKGKWM8e",
+                            Password = "$2a$11$WmLpJimgrXazBBAjPCsbPObIQmLuDZxF/Y5q/YNvF1J/spI3PNs5y",
                             UserName = "abdul"
                         },
                         new
@@ -649,17 +652,17 @@ namespace RealEstateApp.Database.Migrations
                             FirstName = "Prashanth",
                             IsActive = true,
                             LastName = "Ganta",
-                            Password = "$2a$11$3YE1ezajrzyUc1BlEbRjN.wl4l/nykCP6Zm9NLmCIseOcyruDN4GO",
+                            Password = "$2a$11$gXGz41HqS46kcs8BS1q8CuXENfSnjDyY4RNApyjVt4IsS01R8xJtO",
                             UserName = "prashanth"
                         });
                 });
 
             modelBuilder.Entity("RoleUser", b =>
                 {
-                    b.Property<int>("RolesID")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UsersID")
+                    b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("CreatedAt")
@@ -676,24 +679,11 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("RolesID", "UsersID");
-
-                    b.ToTable("RoleUser");
-                });
-
-            modelBuilder.Entity("User Roles", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("User Roles");
+                    b.ToTable("RoleUser");
 
                     b.HasData(
                         new
@@ -814,7 +804,7 @@ namespace RealEstateApp.Database.Migrations
                     b.Navigation("SubPropertyType");
                 });
 
-            modelBuilder.Entity("User Roles", b =>
+            modelBuilder.Entity("RoleUser", b =>
                 {
                     b.HasOne("RealEstateApp.Database.Entities.Role", null)
                         .WithMany()

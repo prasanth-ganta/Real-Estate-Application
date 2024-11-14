@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.Interfaces;
 
@@ -20,16 +18,16 @@ public class MessageController : ControllerBase
     }
 
     [HttpPost("send")]
-    public async Task<IActionResult> SendMessage([FromBody] SendMessageRequestDTO message)
+    public async Task<IActionResult> SendMessage([FromBody] MessageDTO message)
     {
         var result = await _messageService.SendMessageAsync(message);
         return StatusCode(result.StatusCode,result.Value);
     }
 
     [HttpGet("between")]
-    public async Task<IActionResult> GetMessagesBetweenUsers(int receiverID)
+    public async Task<IActionResult> GetMessagesBetweenUsers(int userId)
     {
-        var result = await _messageService.GetMessagesBetweenUsersAsync(receiverID);
+        var result = await _messageService.GetMessagesBetweenUsersAsync(userId);
         return StatusCode(result.StatusCode,result.Value);
     }
 
@@ -54,10 +52,17 @@ public class MessageController : ControllerBase
         return StatusCode(result.StatusCode,result.Value);
     }
 
-    [HttpDelete("{messageID}")]
-    public async Task<IActionResult> DeleteMessage(int messageID)
+    [HttpDelete("DeleteForEveryone/{messageId}")]
+    public async Task<IActionResult> DeleteMessageForEveryone(int messageId)
     {
-        var result = await _messageService.DeleteMessageAsync(messageID);
+        var result = await _messageService.DeleteMessageForEveryoneAsync(messageId);
+        return StatusCode(result.StatusCode,result.Value);
+    }
+
+    [HttpDelete("DeleteForMe/{messageId}")]
+    public async Task<IActionResult> DeleteMessageForMe(int messageId)
+    {
+        var result = await _messageService.DeleteMessageForMe(messageId);
         return StatusCode(result.StatusCode,result.Value);
     }
 

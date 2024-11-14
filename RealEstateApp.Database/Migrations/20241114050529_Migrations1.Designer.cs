@@ -12,8 +12,8 @@ using RealEstateApp.Database.Data;
 namespace RealEstateApp.Database.Migrations
 {
     [DbContext(typeof(RealEstateDbContext))]
-    [Migration("20241113085603_Migrations4")]
-    partial class Migrations4
+    [Migration("20241114050529_Migrations1")]
+    partial class Migrations1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -199,6 +199,9 @@ namespace RealEstateApp.Database.Migrations
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
+                    b.Property<int>("MessageVisibility")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
 
@@ -274,9 +277,6 @@ namespace RealEstateApp.Database.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("PropertyTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StatusId")
                         .HasColumnType("int");
 
                     b.Property<int>("SubPropertyTypeId")
@@ -645,7 +645,7 @@ namespace RealEstateApp.Database.Migrations
                             FirstName = "Abdul",
                             IsActive = true,
                             LastName = "Shaik",
-                            Password = "$2a$11$7c7/YBfxb4MYii92esnse.9WFok1oODLis9dpepxKmEf91.1CoPs2",
+                            Password = "$2a$11$w5sh9y.BfOQA8ApnZJxRyuB40iILJjYtB3JFX4w/H1esBD7npUKny",
                             UserName = "abdul"
                         },
                         new
@@ -655,7 +655,7 @@ namespace RealEstateApp.Database.Migrations
                             FirstName = "Prashanth",
                             IsActive = true,
                             LastName = "Ganta",
-                            Password = "$2a$11$iXRGtN94MqwH08PPBrYhJeUhV9aKR593v85oNCa8wXP/73Ql85JCm",
+                            Password = "$2a$11$xnvvA4OfOtFFO.20S6EFUuqATrx9H/YW.QGDrR8OlCSgp4.4NazVi",
                             UserName = "prashanth"
                         });
                 });
