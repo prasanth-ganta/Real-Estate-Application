@@ -48,7 +48,6 @@ public class UserConfig : IEntityTypeConfiguration<User>
         builder.HasMany(r => r.Roles)
             .WithMany(u => u.Users)
             .UsingEntity<Dictionary<string, object>>(
-                "User Roles",
                 j => j
                     .HasOne<Role>()
                     .WithMany()

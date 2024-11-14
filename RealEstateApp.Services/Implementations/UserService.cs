@@ -53,7 +53,7 @@ public class UserService : IUserService
         if (BCrypt.Net.BCrypt.Verify(loginUser.Password, user.Password))
         {
             string token = GenerateJwtToken(user);
-            return new Response(200, new { Login_status = "Logged in", Token = token });
+            return new Response(200, new { Login_status = "Logged in", Token =$"Bearer {token}" });
         }
 
         return new Response(401, "InValid Credentials");

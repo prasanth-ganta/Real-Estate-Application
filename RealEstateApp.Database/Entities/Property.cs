@@ -1,3 +1,5 @@
+using RealEstateApp.Utility.Enumerations;
+
 namespace RealEstateApp.Database.Entities;
 
 public class Property
@@ -23,7 +25,7 @@ public class Property
     public PropertySubType SubPropertyType { get; set; }
     public User Owner { get; set; }
     public Location Location { get; set; }
-    public ApprovalStatus ApprovalStatus { get; set; }
+    public ApprovalStatus ApprovalStatus { get; set; } 
     public PropertyStatus PropertyStatus { get; set; } 
     public ICollection<Document> Documents { get; set; }
     public ICollection<User> FavouritedByUsers { get; set; }

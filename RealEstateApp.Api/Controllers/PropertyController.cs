@@ -32,11 +32,11 @@ public class PropertyController : ControllerBase
         return StatusCode(result.StatusCode, result.Value);
     }
 
+    [Authorize(Roles = "User,Admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [Authorize(Roles = "User,Admin")]
     [HttpGet("GetOwnedProperties")]
     public async Task<IActionResult> GetOwnedProperties(PropertyListingTypeEnum propertyListingType)
     {
@@ -45,7 +45,7 @@ public class PropertyController : ControllerBase
     }
 
     [Authorize(Roles = "User,Admin")]
-    [HttpGet("GetAllProperties")]
+    [HttpGet("GetAllApprovedProperties")]
     public async Task<IActionResult> GetAllProperties(PropertyListingTypeEnum propertyListingType)
     {
         Response result = await _propertyService.GetAllProperties(propertyListingType);
