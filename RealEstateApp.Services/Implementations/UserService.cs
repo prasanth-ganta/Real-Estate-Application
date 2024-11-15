@@ -9,7 +9,7 @@ using RealEstateApp.Database.Interfaces;
 using RealEstateApp.Services.DTOs;
 using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.Interfaces;
-using RealEstateApp.Services.ResponseType;
+using RealEstateApp.Services.ResponseType;  
 
 namespace RealEstateApp.Services.Implementations;
 
@@ -53,7 +53,7 @@ public class UserService : IUserService
         if (BCrypt.Net.BCrypt.Verify(loginUser.Password, user.Password))
         {
             string token = GenerateJwtToken(user);
-            return new Response(200, new { Login_status = "Logged in", Token = token });
+            return new Response(200, new { Login_status = "Logged in", Token =$"Bearer {token}" });
         }
 
         return new Response(401, "InValid Credentials");
@@ -96,12 +96,12 @@ public class UserService : IUserService
     
     private string GenerateJwtToken(User user)
     {
-        var key = new SymmetricSecurityKey(
+        SymmetricSecurityKey key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"])
         );
-        var Credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        SigningCredentials Credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var payload = new List<Claim>
+        List<Claim> payload = new List<Claim>
         {
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Name, user.UserName),

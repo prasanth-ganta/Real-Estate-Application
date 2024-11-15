@@ -6,11 +6,12 @@ namespace RealEstateApp.Services.Interfaces;
 
 public interface IMessageService
 {
-    public Task<Response> SendMessageAsync(SendMessageRequestDTO sendMessage);
-    public Task<Response> GetMessagesBetweenUsersAsync(int receiverID);
-    public Task<Response> MarkMessageAsReadAsync(int messageID);
-    public Task<Response> GetUnreadMessagesCountAsync();
-    public Task<Response> GetAllUnreadMessagesAsync();
-    public Task<Response> DeleteMessageAsync(int messageID);
-    public Task<Response> DeleteAllMessagesBetweenUsersAsync(int userID);
+    public Task<Response> SendMessage(MessageDTO sendMessage);
+    public Task<Response> GetMessagesBetweenUsers(int receiverID);
+    public Task<Response> MarkMessageAsRead(int messageID);
+    public Task<Response> GetUnreadMessagesCount();
+    public Task<Response> GetAllUnreadMessages();
+    public Task<Response> DeleteMessageForEveryone(int messageID);
+    public Task<Response> DeleteAllMessagesBetweenUsers(int userID);
+    public Task<Response> DeleteMessageForMe(int messageID);
 }

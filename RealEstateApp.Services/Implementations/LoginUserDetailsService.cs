@@ -17,12 +17,12 @@ public class LoginUserDetailsService : ILoginUserDetailsService
     {
         try
         {
-            var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("userId");
-            if (userIdClaim == null || string.IsNullOrEmpty(userIdClaim.Value))
+            var userIDClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("userID");
+            if (userIDClaim == null || string.IsNullOrEmpty(userIDClaim.Value))
             {
                 throw new UnauthorizedAccessException("User is not authenticated");
             }
-            return int.Parse(userIdClaim.Value);
+            return int.Parse(userIDClaim.Value);
         }
         catch (FormatException ex)
         {
@@ -33,11 +33,11 @@ public class LoginUserDetailsService : ILoginUserDetailsService
 
     public string GetCurrentUserName()
     {
-        var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name);
-        if (userIdClaim == null || string.IsNullOrEmpty(userIdClaim.Value))
+        var usernameClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name);
+        if (usernameClaim == null || string.IsNullOrEmpty(usernameClaim.Value))
         {
             throw new UnauthorizedAccessException("User is not authenticated");
         }
-        return userIdClaim.Value;
+        return usernameClaim.Value;
     }
 }

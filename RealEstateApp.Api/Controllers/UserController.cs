@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealEstateApp.Services.DTOs.RequestDTOs;
 using RealEstateApp.Services.Interfaces;
+using RealEstateApp.Services.ResponseType;
 
 namespace RealEstateApp.Api.Controllers; 
 
@@ -23,7 +24,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Register([FromForm] RegisterDTO user)
     {
-        var result = await _userService.Register(user);
+        Response result = await _userService.Register(user);
         return StatusCode(result.StatusCode, result.Value);
     }
 
@@ -34,7 +35,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Login([FromForm] LoginDTO user)
     {
-        var result = await _userService.Login(user);
+        Response result = await _userService.Login(user);
         return StatusCode(result.StatusCode, result.Value);
     }
 
@@ -46,21 +47,21 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAllUsers()
     {
-        var result = await _userService.GetAllUsers();
+        Response result = await _userService.GetAllUsers();
         return StatusCode(result.StatusCode, result.Value);
     }
 
     [Authorize(Roles = "Admin")]
     [HttpDelete("/api/Admin/DeActivateUser")]
     public async Task<IActionResult> DeactivateUser(int userID){
-        var result = await _userService.DeactivateUser(userID);
+        Response result = await _userService.DeactivateUser(userID);
         return StatusCode(result.StatusCode, result.Value);
     }   
 
     [Authorize(Roles = "Admin")]
     [HttpPost("/api/Admin/ActivateUser")]
     public async Task<IActionResult> ActivateUser(int userID){
-        var result = await _userService.ActivateUser(userID);
+        Response result = await _userService.ActivateUser(userID);
         return StatusCode(result.StatusCode, result.Value);
     }  
 }

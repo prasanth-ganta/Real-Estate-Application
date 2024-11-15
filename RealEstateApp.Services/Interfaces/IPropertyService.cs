@@ -12,24 +12,15 @@ public interface IPropertyService
     public Task<Response> GetAllProperties(PropertyListingTypeEnum propertyListingType);
     public Task<Response> GetOwnedProperties(PropertyListingTypeEnum propertyListingType);
     public Task<Response> GetAllPendingProperties();
+    public Task<Response> ApproveProperty(int propertyID);
     public Task<Response> SoftDeleteProperty(int ID);
     Task<Response> UpdatePropertyStatus(int ID, PropertyListingTypeEnum propertyListingType);
-
-    // Buy Methods
-    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByLocation(string city, string state);
-    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByPincode(int zipCode);
-    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByPriceRange(double minPrice, double maxPrice);
-    //Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForBuyByType(int propertyTypeID);
-
-    // Rent Methods
-    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByLocation(string city, string state);
-    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByPincode(int zipCode);
-    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByPriceRange(double minPrice, double maxPrice);
-    Task<IEnumerable<PropertyResponseDTO>> SearchPropertiesForRentByName(string propertyName);
-
-    //Favourites
     Task<Response> AddToFavorites(int propertyID);
     Task<Response> RemoveFromFavorites(int propertyID);
-    //Task GetFavorites(PropertyListingTypeEnum propertyListingType);
     Task<Response>GetFavorites(PropertyListingTypeEnum propertyListingType);
+
+    //search
+    Task<Response> SearchPropertiesByPriceRange(double minPrice, double maxPrice, PropertyListingTypeEnum propertyListingType);
+    Task<Response> SearchPropertiesByPincode(int zipCode, PropertyListingTypeEnum propertyListingType);
+    Task<Response> SearchPropertiesByLocation(string city, string state, PropertyListingTypeEnum propertyListingType);
 }
